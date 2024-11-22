@@ -1,0 +1,9 @@
+.posts-container {
+    padding: 20px;
+    background-color: #000;
+    color: #fff;
+}
+
+.post-list {
+    margin-top: 20px;
+}

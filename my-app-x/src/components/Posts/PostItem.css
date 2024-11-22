@@ -1,0 +1,20 @@
+.post-item {
+    padding: 10px;
+    background-color: #1a1a1a;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.post-item h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.post-item p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.post-item small {
+    color: #999;
+}

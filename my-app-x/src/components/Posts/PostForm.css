@@ -1,0 +1,27 @@
+.post-form {
+    margin-bottom: 20px;
+}
+
+.post-form textarea {
+    width: 100%;
+    padding: 10px;
+    background-color: #1a1a1a;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+} 
+
+.post-form button {
+    padding: 10px 20px;
+    background-color: #1d9bf0;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.post-form button:hover {
+    background-color: #157acc;
+}
