@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createPost } from "../../services/PostServices";
-import "./PostForm.css"; // スタイルをインポート
+import "./PostForm.css"; 
 
 const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) => {
     const [content, setContent] = useState("");

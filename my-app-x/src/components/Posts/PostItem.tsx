@@ -1,5 +1,5 @@
 import React from "react";
-import "./PostItem.css"; // スタイルをインポート
+import "./PostItem.css"; 
 
 const PostItem: React.FC<{ post: any }> = ({ post }) => {
     return (
