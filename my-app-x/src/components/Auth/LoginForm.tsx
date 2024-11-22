@@ -1,53 +1,77 @@
 import React, { useState } from "react";
-import { signInWithPopup, signOut } from "firebase/auth";
-import { fireAuth, googleProvider, registerWithEmailAndPassword, loginWithEmailAndPassword } from "../../firebase";
+import {
+    signInWithPopup,
+    GoogleAuthProvider,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+} from "firebase/auth";
+import { fireAuth } from "../../firebase";
+import "./LoginForm.css";
 
 const LoginForm: React.FC = () => {
+    const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isProcessing, setIsProcessing] = useState(false); // 処理中の状態
 
-    const handleGoogleLogin = async () => {
+    const handleGoogleSignIn = async () => {
+        setIsProcessing(true);
+        const provider = new GoogleAuthProvider();
         try {
-            const result = await signInWithPopup(fireAuth, googleProvider);
-            alert(`Googleでログインしました: ${result.user.displayName}`);
-        } catch (error) {
-            alert(`ログインエラー: ${error}`);
+            const result = await signInWithPopup(fireAuth, provider);
+            alert(`ようこそ、${result.user.displayName}さん！`);
+        } catch (error: any) {
+            handleFirebaseError(error);
+        } finally {
+            setIsProcessing(false);
         }
     };
 
-    const handleEmailLogin = async () => {
+    const handleEmailAuth = async () => {
+        setIsProcessing(true);
         try {
-            await loginWithEmailAndPassword(email, password);
-            alert("メールでログイン成功！");
-        } catch (error) {
-            alert(`ログインエラー: ${error}`);
+            if (isSignUp) {
+                const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);
+                alert(`アカウント作成成功: ${userCredential.user.email}`);
+            } else {
+                const userCredential = await signInWithEmailAndPassword(fireAuth, email, password);
+                alert(`ログイン成功: ${userCredential.user.email}`);
+            }
+        } catch (error: any) {
+            handleFirebaseError(error);
+        } finally {
+            setIsProcessing(false);
         }
     };
 
-    const handleEmailRegister = async () => {
-        try {
-            await registerWithEmailAndPassword(email, password);
-            alert("アカウント登録成功！");
-        } catch (error) {
-            alert(`登録エラー: ${error}`);
-        }
-    };
-
-    const handleLogout = async () => {
-        try {
-            await signOut(fireAuth);
-            alert("ログアウトしました！");
-        } catch (error) {
-            alert(`ログアウトエラー: ${error}`);
+    const handleFirebaseError = (error: any) => {
+        if (error.code === "auth/email-already-in-use") {
+            alert("このメールアドレスは既に使用されています。");
+        } else if (error.code === "auth/invalid-email") {
+            alert("メールアドレスの形式が正しくありません。");
+        } else if (error.code === "auth/weak-password") {
+            alert("パスワードは6文字以上にしてください。");
+        } else if (error.code === "auth/wrong-password") {
+            alert("パスワードが正しくありません。");
+        } else if (error.code === "auth/user-not-found") {
+            alert("このメールアドレスに一致するアカウントが見つかりません。");
+        } else {
+            alert(`エラー: ${error.message}`);
         }
     };
 
     return (
-        <div>
-            <h2>ログイン</h2>
-            <button onClick={handleGoogleLogin}>Googleでログイン</button>
-
-            <div>
+        <div className="login-container">
+            <div className="login-box">
+                <h2>{isSignUp ? "アカウント作成" : "ログイン"}</h2>
+                <button
+                    className="google-button"
+                    onClick={handleGoogleSignIn}
+                    disabled={isProcessing}
+                >
+                    Googleで{isSignUp ? "登録" : "ログイン"}
+                </button>
+                <div className="divider">または</div>
                 <input
                     type="email"
                     placeholder="メールアドレス"
@@ -60,11 +84,26 @@ const LoginForm: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button onClick={handleEmailLogin}>メールでログイン</button>
-                <button onClick={handleEmailRegister}>アカウントを登録</button>
+                <button
+                    className={`auth-button ${isSignUp ? "signup" : ""}`}
+                    onClick={handleEmailAuth}
+                    disabled={isProcessing}
+                >
+                    {isSignUp ? "アカウントを作成" : "ログイン"}
+                </button>
+                <p className="switch-mode">
+                    {isSignUp ? (
+                        <>
+                            アカウントをお持ちですか？{" "}
+                            <span onClick={() => setIsSignUp(false)}>ログイン</span>
+                        </>
+                    ) : (
+                        <>
+                            アカウントをお持ちでない場合は <span onClick={() => setIsSignUp(true)}>登録</span>
+                        </>
+                    )}
+                </p>
             </div>
-
-            <button onClick={handleLogout}>ログアウト</button>
         </div>
     );
 };

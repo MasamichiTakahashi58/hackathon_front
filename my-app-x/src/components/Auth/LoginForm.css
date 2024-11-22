@@ -1,0 +1,93 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+}
+
+.login-box {
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    background: #1c1c1e;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+}
+
+.google-button {
+    background-color: #4285f4;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.google-button:hover {
+    background-color: #357ae8;
+}
+
+.divider {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #888;
+}
+
+input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background: #333;
+    color: #fff;
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+.auth-button {
+    background-color: #1da1f2;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.auth-button.signup {
+    background-color: #28a745; /* アカウント作成時の色 */
+}
+
+.auth-button:hover {
+    background-color: #1991e8;
+}
+
+.switch-mode {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #888;
+}
+
+.switch-mode span {
+    color: #1da1f2;
+    cursor: pointer;
+    text-decoration: underline;
+}
