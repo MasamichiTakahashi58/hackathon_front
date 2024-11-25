@@ -6,6 +6,7 @@ import {
     signInWithEmailAndPassword,
 } from "firebase/auth";
 import { fireAuth } from "../../firebase";
+import { useNavigate } from "react-router-dom"; // navigate をインポート
 import "./LoginForm.css";
 
 const LoginForm: React.FC = () => {
@@ -13,6 +14,7 @@ const LoginForm: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isProcessing, setIsProcessing] = useState(false); // 処理中の状態
+    const navigate = useNavigate(); // navigate を初期化
 
     const handleGoogleSignIn = async () => {
         setIsProcessing(true);
@@ -20,6 +22,7 @@ const LoginForm: React.FC = () => {
         try {
             const result = await signInWithPopup(fireAuth, provider);
             alert(`ようこそ、${result.user.displayName}さん！`);
+            navigate("/profile/create"); // プロフィール作成ページへ遷移
         } catch (error: any) {
             handleFirebaseError(error);
         } finally {
@@ -33,9 +36,11 @@ const LoginForm: React.FC = () => {
             if (isSignUp) {
                 const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);
                 alert(`アカウント作成成功: ${userCredential.user.email}`);
+                navigate("/profile/create"); // プロフィール作成ページへ遷移
             } else {
                 const userCredential = await signInWithEmailAndPassword(fireAuth, email, password);
                 alert(`ログイン成功: ${userCredential.user.email}`);
+                navigate("/home"); // ホームページへ遷移
             }
         } catch (error: any) {
             handleFirebaseError(error);

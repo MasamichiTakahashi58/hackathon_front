@@ -7,8 +7,6 @@ const ProfileEditForm: React.FC = () => {
         username: "",
         display_name: "",
         bio: "",
-        location: "",
-        website: "",
     });
 
     const navigate = useNavigate();
@@ -41,7 +39,7 @@ const ProfileEditForm: React.FC = () => {
             }
             await api.put("/users/update", { id: userID, ...profile });
             alert("プロフィールが更新されました！");
-            navigate("/posts");
+            navigate("/home");
         } catch (error) {
             console.error("プロフィール更新エラー:", error);
             alert("プロフィールの更新に失敗しました。");
@@ -67,18 +65,6 @@ const ProfileEditForm: React.FC = () => {
                 placeholder="自己紹介"
                 value={profile.bio}
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-            />
-            <input
-                type="text"
-                placeholder="所在地"
-                value={profile.location}
-                onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-            />
-            <input
-                type="text"
-                placeholder="ウェブサイト"
-                value={profile.website}
-                onChange={(e) => setProfile({ ...profile, website: e.target.value })}
             />
             <button onClick={handleSubmit}>更新</button>
         </div>

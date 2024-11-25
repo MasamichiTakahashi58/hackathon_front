@@ -12,7 +12,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(fireAuth, (user) => {
-            setIsLoggedIn(!!user); // ユーザーが存在すればログイン状態
+            setIsLoggedIn(!!user); 
         });
 
         return () => unsubscribe(); // クリーンアップ処理

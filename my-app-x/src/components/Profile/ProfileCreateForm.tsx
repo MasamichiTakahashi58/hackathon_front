@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fireAuth } from "../../firebase"; // Firebase 認証をインポート
 import api from "../../api/axiosInstance";
 
 const ProfileCreateForm: React.FC = () => {
@@ -9,14 +10,40 @@ const ProfileCreateForm: React.FC = () => {
 
     const handleSubmit = async () => {
         try {
-            const email = localStorage.getItem("userEmail"); // Firebase 認証後に保存
-            if (!email) {
+            const user = fireAuth.currentUser; // Firebase の現在のユーザーを取得
+            if (!user) {
                 alert("ログインしていません。");
                 return;
             }
+
+            const email = user.email; // メールアドレスを取得
+            if (!email) {
+                alert("メールアドレスを取得できませんでした。");
+                return;
+            }
+            if (!username.trim()) {
+                alert("ユーザー名を入力してください。");
+                return;
+            }
+            if (!displayName.trim()) {
+                alert("表示名を入力してください。");
+                return;
+            }
+
+            const payload = {
+                email: email,
+                username: username,
+                display_name: displayName,
+                profile_image: "",
+                header_image: "",
+                bio: "",
+            };
+            console.log("Sending payload:", payload);
+
+            // API に送信
             await api.post("/users/create", { email, username, display_name: displayName });
             alert("プロフィールが作成されました！");
-            navigate("/posts");
+            navigate("/home"); // ホームページへ遷移
         } catch (error) {
             console.error("プロフィール作成エラー:", error);
             alert("プロフィールの作成に失敗しました。");
