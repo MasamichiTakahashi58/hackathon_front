@@ -2,19 +2,25 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { fireAuth } from "../../firebase";
+import { useAuth } from "../Auth/AuthContext"; // 認証コンテキストをインポート
 import "./Sidebar.css";
 
 const Sidebar: React.FC = () => {
     const navigate = useNavigate();
+    const { user } = useAuth(); // 認証状態を取得
 
     const handleNavigation = (path: string) => {
+        if (!user) {
+            alert("ログインしていません。");
+            navigate("/login");
+            return;
+        }
         navigate(path);
     };
 
     const handleLogout = async () => {
         try {
             await signOut(fireAuth); // Firebaseサインアウト
-            localStorage.removeItem("userEmail"); // ログイン情報を削除
             navigate("/login"); // ログイン画面に遷移
             alert("ログアウトしました");
         } catch (error) {
@@ -34,4 +40,3 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
-

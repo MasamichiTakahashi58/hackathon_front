@@ -1,33 +1,51 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { fireAuth } from "./firebase";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./components/Auth/AuthContext";
+import PrivateRoute from "./components/Auth/PrivateRoute";
 import LoginForm from "./components/Auth/LoginForm";
 import ProfileCreateForm from "./components/Profile/ProfileCreateForm";
 import ProfileEditForm from "./components/Profile/ProfileEditForm";
 import HomePage from "./components/Home/HomePage";
 
 const App: React.FC = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(fireAuth, (user) => {
-            setIsLoggedIn(!!user); 
-        });
-
-        return () => unsubscribe(); // クリーンアップ処理
-    }, []);
-
     return (
-        <Router>
-            <Routes>
-                <Route path="/login" element={isLoggedIn ? <Navigate to="/home" /> : <LoginForm />} />
-                <Route path="/profile/create" element={isLoggedIn ? <ProfileCreateForm /> : <Navigate to="/login" />} />
-                <Route path="/profile/edit" element={isLoggedIn ? <ProfileEditForm /> : <Navigate to="/login" />} />
-                <Route path="/home" element={isLoggedIn ? <HomePage /> : <Navigate to="/login" />} />
-                <Route path="*" element={<Navigate to="/login" />} />
-            </Routes>
-        </Router>
+        <AuthProvider>
+            <Router>
+                <Routes>
+                    {/* ログインページ */}
+                    <Route path="/login" element={<LoginForm />} />
+
+                    {/* 認証が必要なルート */}
+                    <Route
+                        path="/profile/create"
+                        element={
+                            <PrivateRoute>
+                                <ProfileCreateForm />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/profile/edit"
+                        element={
+                            <PrivateRoute>
+                                <ProfileEditForm />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/home"
+                        element={
+                            <PrivateRoute>
+                                <HomePage />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* デフォルトルート */}
+                    <Route path="*" element={<LoginForm />} />
+                </Routes>
+            </Router>
+        </AuthProvider>
     );
 };
 

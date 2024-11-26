@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fireAuth } from "../../firebase"; // Firebase 認証をインポート
+import { fireAuth } from "../../firebase"; 
 import api from "../../api/axiosInstance";
 
 const ProfileCreateForm: React.FC = () => {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Auth/AuthContext";
 import api from "../../api/axiosInstance";
 
 const ProfileEditForm: React.FC = () => {
@@ -8,14 +9,14 @@ const ProfileEditForm: React.FC = () => {
         display_name: "",
         bio: "",
     });
-
+    const { userID, user } = useAuth(); // userID と認証情報を取得
     const navigate = useNavigate();
 
     const fetchProfile = async () => {
         try {
-            const userID = localStorage.getItem("userID"); // ログイン後に保存されたID
             if (!userID) {
                 alert("ログインしていません。");
+                navigate("/login");
                 return;
             }
             const response = await api.get(`/users/${userID}`);
@@ -28,16 +29,16 @@ const ProfileEditForm: React.FC = () => {
 
     useEffect(() => {
         fetchProfile();
-    }, []);
+    }, [userID]);
 
     const handleSubmit = async () => {
         try {
-            const userID = localStorage.getItem("userID"); // ログイン後に保存されたID
             if (!userID) {
                 alert("ログインしていません。");
+                navigate("/login");
                 return;
             }
-            await api.put("/users/update", { id: userID, ...profile });
+            await api.put(`/users/update`, { id: userID, ...profile });
             alert("プロフィールが更新されました！");
             navigate("/home");
         } catch (error) {

@@ -6,7 +6,7 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
     const [content, setContent] = useState("");
 
     const handleSubmit = async () => {
-        if (!content) return;
+        if (!content.trim()) return;
         const userId = 1; // 仮のユーザーID
         await createPost(content, userId);
         setContent("");
@@ -14,13 +14,27 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
     };
 
     return (
-        <div className="post-form">
-        <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Write a new post..."
-        />
-        <button onClick={handleSubmit}>Post</button>
+        <div className="post-form-container">
+            <div className="post-form-header">
+                <div className="post-icon">
+                    <img
+                        src="https://via.placeholder.com/48" // 仮のアイコン画像URL
+                        alt="User Icon"
+                        className="user-icon"
+                    />
+                </div>
+                <textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="いまどうしてる？"
+                    className="post-textarea"
+                />
+            </div>
+            <div className="post-form-footer">
+                <button className="post-button" onClick={handleSubmit}>
+                    ポストする
+                </button>
+            </div>
         </div>
     );
 };

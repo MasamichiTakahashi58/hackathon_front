@@ -10,6 +10,8 @@ interface Post {
     user_id: number;
     content: string;
     created_at: string;
+    display_name: string; // 仮のプロパティ
+    username: string; // 仮のプロパティ
 }
 
 const HomePage: React.FC = () => {
@@ -18,7 +20,13 @@ const HomePage: React.FC = () => {
     const fetchPosts = async () => {
         try {
             const data = await getPosts();
-            setPosts(data || []);
+
+            // データを降順（新しい順）にソート
+            const sortedPosts = (data || []).sort(
+                (a: Post, b: Post) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            );
+
+            setPosts(sortedPosts);
         } catch (error) {
             console.error("Error fetching posts:", error);
         }
