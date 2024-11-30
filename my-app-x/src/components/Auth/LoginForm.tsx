@@ -6,7 +6,7 @@ import {
     signInWithEmailAndPassword,
 } from "firebase/auth";
 import { fireAuth } from "../../firebase";
-import { useNavigate } from "react-router-dom"; // navigate をインポート
+import { useNavigate } from "react-router-dom"; 
 import "./LoginForm.css";
 
 const LoginForm: React.FC = () => {
@@ -14,7 +14,7 @@ const LoginForm: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isProcessing, setIsProcessing] = useState(false); // 処理中の状態
-    const navigate = useNavigate(); // navigate を初期化
+    const navigate = useNavigate(); 
 
     const handleGoogleSignIn = async () => {
         setIsProcessing(true);
@@ -22,7 +22,7 @@ const LoginForm: React.FC = () => {
         try {
             const result = await signInWithPopup(fireAuth, provider);
             alert(`ようこそ、${result.user.displayName}さん！`);
-            navigate("/profile/create"); // プロフィール作成ページへ遷移
+            navigate("/profile/create");// プロフィール作成ページへ遷移
         } catch (error: any) {
             handleFirebaseError(error);
         } finally {

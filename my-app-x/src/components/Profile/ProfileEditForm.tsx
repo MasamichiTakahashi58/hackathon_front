@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getUserById, updateUser } from "../../services/UserService";
 import { useAuth } from "../Auth/AuthContext";
-import api from "../../api/axiosInstance";
 
 const ProfileEditForm: React.FC = () => {
     const [profile, setProfile] = useState({
@@ -9,36 +9,34 @@ const ProfileEditForm: React.FC = () => {
         display_name: "",
         bio: "",
     });
-    const { userID, user } = useAuth(); // userID と認証情報を取得
+    const { userID } = useAuth();
     const navigate = useNavigate();
 
-    const fetchProfile = async () => {
-        try {
+    useEffect(() => {
+        const fetchProfile = async () => {
             if (!userID) {
                 alert("ログインしていません。");
-                navigate("/login");
                 return;
             }
-            const response = await api.get(`/users/${userID}`);
-            setProfile(response.data);
-        } catch (error) {
-            console.error("プロフィール取得エラー:", error);
-            alert("プロフィールの取得に失敗しました。");
-        }
-    };
+            try {
+                const userData = await getUserById(Number(userID)); // サービスファイルを使用
+                setProfile(userData);
+            } catch (error) {
+                console.error("プロフィール取得エラー:", error);
+                alert("プロフィールの取得に失敗しました。");
+            }
+        };
 
-    useEffect(() => {
         fetchProfile();
     }, [userID]);
 
     const handleSubmit = async () => {
+        if (!userID) {
+            alert("ログインしていません。");
+            return;
+        }
         try {
-            if (!userID) {
-                alert("ログインしていません。");
-                navigate("/login");
-                return;
-            }
-            await api.put(`/users/update`, { id: userID, ...profile });
+            await updateUser(Number(userID), profile); // サービスファイルを使用
             alert("プロフィールが更新されました！");
             navigate("/home");
         } catch (error) {

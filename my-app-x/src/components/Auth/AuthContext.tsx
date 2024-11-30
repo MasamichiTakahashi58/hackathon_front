@@ -5,7 +5,7 @@ import api from "../../api/axiosInstance";
 
 interface AuthContextType {
     user: User | null;
-    userID: string | null; // userID を追加
+    userID: number | null; // userID を number 型に変更
     loading: boolean;
 }
 
@@ -13,7 +13,7 @@ const AuthContext = createContext<AuthContextType>({ user: null, userID: null, l
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [userID, setUserID] = useState<string | null>(null); // userID を管理
+    const [userID, setUserID] = useState<number | null>(null); // userID を number 型で管理
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -22,13 +22,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             if (firebaseUser?.email) {
                 try {
-                    console.log("リクエスト送信: /users/email", { email: firebaseUser.email });
-                    // email から userID を取得
+                    console.log("Fetching userID for email:", firebaseUser.email);
                     const response = await api.get(`/users/email`, { params: { email: firebaseUser.email } });
-                    console.log("レスポンス取得:", response.data);
-                    setUserID(response.data.id); // userID を保存
+                    if (response.data && typeof response.data.id === "number") {
+                        setUserID(response.data.id); // 数値型で保存
+                        console.log("Fetched userID:", response.data.id);
+                    } else {
+                        console.error("Invalid response format or missing ID:", response.data);
+                        setUserID(null);
+                    }
                 } catch (error) {
-                    console.error("userIDの取得に失敗しました:", error);
+                    console.error("Failed to fetch userID:", error);
                     setUserID(null);
                 }
             } else {
@@ -48,4 +52,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
+};

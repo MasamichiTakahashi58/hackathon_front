@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import PostItem from "../Posts/PostItem";
 import PostForm from "../Posts/PostForm";
-import { getPosts } from "../../services/PostServices";
+import { getPosts } from "../../services/PostService";
 import "./HomePage.css";
 
 interface Post {

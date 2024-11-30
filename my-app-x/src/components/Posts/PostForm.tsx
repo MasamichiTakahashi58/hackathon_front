@@ -1,16 +1,28 @@
 import React, { useState } from "react";
-import { createPost } from "../../services/PostServices";
-import "./PostForm.css"; 
+import { createPost } from "../../services/PostService";
+import { useAuth } from "../Auth/AuthContext"; // 認証コンテキストをインポート
+import "./PostForm.css";
 
 const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) => {
     const [content, setContent] = useState("");
+    const { userID } = useAuth(); // ログイン中のユーザーIDを取得
 
     const handleSubmit = async () => {
         if (!content.trim()) return;
-        const userId = 1; // 仮のユーザーID
-        await createPost(content, userId);
-        setContent("");
-        onPostCreated();
+
+        if (!userID) {
+            alert("ログインしていません。");
+            return;
+        }
+
+        try {
+            await createPost(content, userID); // ログイン中のユーザーIDを利用
+            setContent("");
+            onPostCreated();
+        } catch (error) {
+            console.error("投稿エラー:", error);
+            alert("投稿に失敗しました。");
+        }
     };
 
     return (

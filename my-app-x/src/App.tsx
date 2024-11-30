@@ -15,7 +15,7 @@ const App: React.FC = () => {
                     {/* ログインページ */}
                     <Route path="/login" element={<LoginForm />} />
 
-                    {/* 認証が必要なルート */}
+                    
                     <Route
                         path="/profile/create"
                         element={
