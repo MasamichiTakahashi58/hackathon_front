@@ -5,6 +5,7 @@ import PrivateRoute from "./components/Auth/PrivateRoute";
 import LoginForm from "./components/Auth/LoginForm";
 import ProfileCreateForm from "./components/Profile/ProfileCreateForm";
 import ProfileEditForm from "./components/Profile/ProfileEditForm";
+import ProfilePage from "./components/Profile/ProfilePage";
 import HomePage from "./components/Home/HomePage";
 
 const App: React.FC = () => {
@@ -29,6 +30,14 @@ const App: React.FC = () => {
                         element={
                             <PrivateRoute>
                                 <ProfileEditForm />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/profile"
+                        element={
+                            <PrivateRoute>
+                                <ProfilePage />
                             </PrivateRoute>
                         }
                     />

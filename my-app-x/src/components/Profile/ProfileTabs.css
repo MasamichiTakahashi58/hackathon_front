@@ -1,0 +1,41 @@
+.profile-tabs {
+    background-color: #fff; /* タブ全体の背景色 */
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd; /* 下線で区切り */
+}
+
+.tabs {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px; /* 各タブの間隔 */
+    margin-bottom: 10px;
+}
+
+.tabs button {
+    padding: 10px 15px;
+    border: none;
+    background: none;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s, border-bottom 0.2s;
+    position: relative;
+}
+
+.tabs button.active {
+    color: #000; /* アクティブなタブのテキスト色 */
+    font-weight: bold;
+    border-bottom: 2px solid #007bff; /* アクティブなタブの下線 */
+}
+
+.tabs button:hover {
+    color: #007bff; /* ホバー時の色 */
+}
+
+.tab-content {
+    padding: 20px;
+    background-color: #fff;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
+import RightSidebar from "./RightSidebar";
 import PostItem from "../Posts/PostItem";
 import PostForm from "../Posts/PostForm";
 import { getPosts } from "../../services/PostService";
@@ -51,6 +52,7 @@ const HomePage: React.FC = () => {
                     )}
                 </div>
             </div>
+            <RightSidebar/>
         </div>
     );
 };

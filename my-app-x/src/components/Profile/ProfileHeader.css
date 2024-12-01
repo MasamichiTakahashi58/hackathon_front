@@ -1,0 +1,87 @@
+.profile-header {
+    background-color: #f5f5f5; /* 背景色 */
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd; /* 下線で区切り */
+    position: relative;
+}
+
+.cover-photo {
+    width: 100%;
+    height: 200px;
+    background-color: #d8d8d8; /* カバー写真の背景色 */
+    position: relative;
+}
+
+.profile-info {
+    display: flex;
+    justify-content: space-between; /* プロフィール写真と編集ボタンを両端に配置 */
+    align-items: flex-start;
+    padding: 20px;
+    margin-top: -60px; /* カバー写真の下に重ねて配置 */
+    position: relative;
+}
+
+.profile-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%; /* 丸い形状 */
+    border: 4px solid white; /* 白い枠線 */
+    background-color: #ccc; /* プロフィール写真の背景色 */
+}
+
+.profile-details {
+    flex: 1;
+    margin-left: 20px; /* プロフィール写真との間隔 */
+}
+
+.profile-details h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* アイコンとの間隔 */
+}
+
+.profile-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.profile-bio {
+    font-size: 14px;
+    color: #555;
+    margin: 10px 0;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 15px; /* フォロー数とフォロワー数の間隔 */
+    font-size: 14px;
+    color: #555;
+}
+
+.profile-stats span {
+    cursor: pointer;
+}
+
+.profile-stats span:hover {
+    text-decoration: underline;
+}
+
+.edit-profile-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    background-color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.edit-profile-button:hover {
+    background-color: #e6e6e6;
+    color: #000;
+}
