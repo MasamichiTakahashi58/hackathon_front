@@ -1,30 +1,54 @@
 import React, { useState } from "react";
-import { createReply } from "../../services/ReplyService";
-import { useAuth } from "../Auth/AuthContext";
+import { createReply } from "../../services/ReplyService"; 
+import { useAuth } from "../Auth/AuthContext"; 
+import "./ReplyForm.css"; 
 
-const ReplyForm: React.FC<{ postID: number; onReplyCreated: () => void }> = ({ postID, onReplyCreated }) => {
-    const [content, setContent] = useState("");
-    const { userID } = useAuth();
+const ReplyForm: React.FC<{
+    postID: number;
+    parentID?: number; 
+    onReplyCreated: () => void; 
+}> = ({ postID, parentID, onReplyCreated }) => {
+    const [content, setContent] = useState(""); 
+    const { userID } = useAuth(); 
 
-    const handleReply = async () => {
-        if (!content.trim()) return;
+    const handleSubmit = async () => {
+        if (!content.trim()) {
+            alert("リプライ内容を入力してください。");
+            return;
+        }
+
         if (!userID) {
             alert("ログインしていません。");
             return;
         }
+
         try {
-            await createReply(content, postID, Number(userID)); // サービスファイルを使用
-            setContent("");
-            onReplyCreated();
-        } catch (error) {
+            console.log("リクエストデータ:", {
+                content,
+                postID,
+                userID,
+                parentID: parentID ?? null,
+            });
+            await createReply(content, postID, userID, parentID);
+            setContent(""); 
+            onReplyCreated(); 
+        } catch (error: any) {
             console.error("リプライ作成エラー:", error);
+            alert(error.response?.data?.message || "リプライの作成に失敗しました。");
         }
     };
 
     return (
-        <div>
-            <textarea value={content} onChange={(e) => setContent(e.target.value)} />
-            <button onClick={handleReply}>リプライ</button>
+        <div className="reply-form">
+            <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="リプライを入力..."
+                className="reply-textarea"
+            />
+            <button className="reply-button" onClick={handleSubmit}>
+                リプライ
+            </button>
         </div>
     );
 };

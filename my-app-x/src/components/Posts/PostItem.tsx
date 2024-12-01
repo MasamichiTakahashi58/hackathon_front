@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import ReplyForm from "../Reply/ReplyForm";
 import LikeButton from "../Like/LikeButton";
+import ReplyList from "../Reply/ReplyList";
 import "./PostItem.css"; 
 
 interface Post {
@@ -11,6 +13,13 @@ interface Post {
 }
 
 const PostItem: React.FC<{ post: Post }> = ({ post }) => {
+    const [isReplyVisible, setIsReplyVisible] = useState(false);
+
+    const handleReplyCreated = () => {
+        console.log("リプライが作成されました");
+        setIsReplyVisible(false); 
+    };
+
     return (
         <div className="post-item">
             {/* ヘッダー部分: ユーザー情報 */}
@@ -32,10 +41,22 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
 
             {/* アクションボタン */}
             <div className="post-actions">
-                <button className="action-button">リプライ</button>
+            <button
+                    className="action-button"
+                    onClick={() => setIsReplyVisible(!isReplyVisible)}
+                >
+                    💬
+                </button>
                 <button className="action-button">リポスト</button>
                 <LikeButton postID={post.id} />
             </div>
+            
+            {isReplyVisible && (
+                <>
+                    <ReplyForm postID={post.id} onReplyCreated={handleReplyCreated} />
+                    <ReplyList postID={post.id} />
+                </>
+            )}
         </div>
     );
 };

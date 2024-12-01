@@ -1,0 +1,36 @@
+.replies-list {
+    margin-left: 20px;
+    border-left: 2px solid #ccc;
+    padding-left: 10px;
+    margin-top: 10px;
+}
+
+.reply-item {
+    margin-bottom: 10px;
+}
+
+.reply-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reply-header h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.reply-header .username {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.reply-header small {
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.reply-content {
+    margin: 5px 0;
+    font-size: 0.95rem;
+}
