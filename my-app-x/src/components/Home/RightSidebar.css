@@ -1,0 +1,43 @@
+.right-sidebar {
+    background-color: #f9f9f9; /* 背景色 */
+    padding: 20px; /* 内側の余白 */
+    border-left: 1px solid #ddd; /* 左の境界線 */
+    height: 100%; /* 高さを全体に合わせる */
+    overflow-y: auto; /* コンテンツが長い場合にスクロール可能にする */
+}
+
+.right-sidebar h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.right-sidebar ul {
+    list-style: none; /* リストマーカーを非表示 */
+    padding: 0; /* リストのパディングを削除 */
+    margin: 0; /* リストのマージンを削除 */
+}
+
+.right-sidebar li {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.right-sidebar li:hover {
+    text-decoration: underline; /* ホバー時に下線を表示 */
+    cursor: pointer; /* ホバー時にポインタに変更 */
+}
+
+.recommended {
+    margin-bottom: 30px; /* 「おすすめツイート」と「トレンド」の間の余白 */
+}
+
+.trending ul li {
+    font-weight: bold;
+}
+
+.trending ul li:hover {
+    color: #007bff; /* トレンド項目のホバー時の色を青に設定 */
+}

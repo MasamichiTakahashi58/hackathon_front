@@ -1,0 +1,22 @@
+.like-button {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    user-select: none;
+    gap: 5px; 
+    transition: color 0.2s ease;
+}
+
+.like-button:hover {
+    color: #ff4757;
+}
+
+.like-icon {
+    font-size: 16px;
+}
+
+.like-count {
+    font-size: 14px;
+}

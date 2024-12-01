@@ -1,0 +1,15 @@
+.home-container {
+    display: flex;
+    flex-direction: row;
+    background-color: #f0f2f5;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    height: 100vh;
+    overflow-y: auto;
+    border-left: 1px solid #e6ecf0;
+    border-right: 1px solid #e6ecf0;
+}
