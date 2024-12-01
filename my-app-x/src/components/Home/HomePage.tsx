@@ -8,10 +8,10 @@ import "./HomePage.css";
 interface Post {
     id: number;
     user_id: number;
+    display_name: string; 
+    username: string; 
     content: string;
     created_at: string;
-    display_name: string; // 仮のプロパティ
-    username: string; // 仮のプロパティ
 }
 
 const HomePage: React.FC = () => {
@@ -19,11 +19,12 @@ const HomePage: React.FC = () => {
 
     const fetchPosts = async () => {
         try {
-            const data = await getPosts();
+            const data = await getPosts(); // バックエンドから投稿データを取得
 
-            // データを降順（新しい順）にソート
+            // データを降順（新しい投稿が上）にソート
             const sortedPosts = (data || []).sort(
-                (a: Post, b: Post) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                (a: Post, b: Post) =>
+                    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             );
 
             setPosts(sortedPosts);

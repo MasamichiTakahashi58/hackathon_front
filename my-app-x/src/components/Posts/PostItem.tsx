@@ -1,7 +1,9 @@
 import React from "react";
+import LikeButton from "../Like/LikeButton";
 import "./PostItem.css"; 
 
 interface Post {
+    id: number;
     display_name: string;
     username: string;
     created_at: string;
@@ -32,7 +34,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
             <div className="post-actions">
                 <button className="action-button">リプライ</button>
                 <button className="action-button">リポスト</button>
-                <button className="action-button">いいね</button>
+                <LikeButton postID={post.id} />
             </div>
         </div>
     );
