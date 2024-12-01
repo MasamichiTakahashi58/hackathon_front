@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import ReplyForm from "../Reply/ReplyForm";
+import React, { useState, useEffect } from "react";
 import LikeButton from "../Like/LikeButton";
+import ReplyForm from "../Reply/ReplyForm";
 import ReplyList from "../Reply/ReplyList";
-import "./PostItem.css"; 
+import { getRepliesByPost } from "../../services/ReplyService"; // リプライを取得する関数をインポート
+import "./PostItem.css";
 
 interface Post {
     id: number;
@@ -14,18 +15,32 @@ interface Post {
 
 const PostItem: React.FC<{ post: Post }> = ({ post }) => {
     const [isReplyVisible, setIsReplyVisible] = useState(false);
+    const [replyCount, setReplyCount] = useState<number>(0);
+
+    // 初期表示時にリプライ数を取得
+    useEffect(() => {
+        fetchReplyCount();
+    }, []);
+
+    const fetchReplyCount = async () => {
+        try {
+            const replies = await getRepliesByPost(post.id);
+            setReplyCount(replies.length); 
+        } catch (error) {
+            console.error("リプライ数取得エラー:", error);
+        }
+    };
 
     const handleReplyCreated = () => {
-        console.log("リプライが作成されました");
-        setIsReplyVisible(false); 
+        fetchReplyCount(); 
     };
 
     return (
         <div className="post-item">
-            {/* ヘッダー部分: ユーザー情報 */}
+            {/* 投稿情報 */}
             <div className="post-header">
                 <img
-                    src="https://via.placeholder.com/48" // 仮のアイコン画像URL
+                    src="https://via.placeholder.com/48" // 仮のアイコン画像
                     alt="User Icon"
                     className="user-icon"
                 />
@@ -36,25 +51,25 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
                 <small className="post-date">{new Date(post.created_at).toLocaleDateString()}</small>
             </div>
 
-            {/* 投稿内容 */}
             <p className="post-content">{post.content}</p>
 
             {/* アクションボタン */}
             <div className="post-actions">
-            <button
+                <button
                     className="action-button"
                     onClick={() => setIsReplyVisible(!isReplyVisible)}
                 >
-                    💬
+                    💬 {replyCount}
                 </button>
                 <button className="action-button">リポスト</button>
                 <LikeButton postID={post.id} />
             </div>
-            
+
+            {/* リプライフォーム */}
             {isReplyVisible && (
                 <>
                     <ReplyForm postID={post.id} onReplyCreated={handleReplyCreated} />
-                    <ReplyList postID={post.id} />
+                    <ReplyList postID={post.id} onReplyCountChange={setReplyCount} />
                 </>
             )}
         </div>

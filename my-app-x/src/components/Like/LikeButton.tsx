@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { addLike, removeLike, countLikes, hasUserLiked } from "../../services/LikeService"; // hasUserLiked をインポート
+import { addLike, removeLike, countLikes, hasUserLiked } from "../../services/LikeService"; 
 import { useAuth } from "../Auth/AuthContext";
+import "./LikeButton.css"; 
 
 const LikeButton: React.FC<{ postID: number }> = ({ postID }) => {
     const { userID } = useAuth();
     const [likeCount, setLikeCount] = useState(0);
     const [liked, setLiked] = useState(false);
-    const [pendingRequest, setPendingRequest] = useState(false); // リクエスト中かどうか
+    const [pendingRequest, setPendingRequest] = useState(false);
 
     useEffect(() => {
         const initializeLikes = async () => {
             if (!userID) return;
 
             try {
-                const count = await countLikes(postID); // いいね数を取得
-                const hasLiked = await hasUserLiked(postID, userID); // ユーザーがいいねしたかを取得
+                const count = await countLikes(postID); 
+                const hasLiked = await hasUserLiked(postID, userID); 
                 setLikeCount(count);
                 setLiked(hasLiked);
             } catch (error) {
@@ -25,25 +26,19 @@ const LikeButton: React.FC<{ postID: number }> = ({ postID }) => {
         initializeLikes();
     }, [postID, userID]);
 
-    // 実際にバックエンドにリクエストを送信する関数
     const sendLikeRequest = useCallback(async () => {
         try {
-            console.log(
-                liked ? "Removing like:" : "Adding like:",
-                { postID, userID } // ここでリクエスト内容を確認
-            );
             if (liked) {
-                await removeLike(postID, Number(userID)); // いいねを削除
+                await removeLike(postID, Number(userID));
             } else {
-                await addLike(postID, Number(userID)); // いいねを追加
+                await addLike(postID, Number(userID)); 
             }
         } catch (error) {
             console.error("リクエストエラー:", error);
-            // エラー時に状態を元に戻す
-            setLiked((prev) => !prev);
+            setLiked((prev) => !prev); 
             setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
         } finally {
-            setPendingRequest(false); // リクエスト終了
+            setPendingRequest(false);
         }
     }, [liked, postID, userID]);
 
@@ -62,17 +57,18 @@ const LikeButton: React.FC<{ postID: number }> = ({ postID }) => {
         }
 
         if (!pendingRequest) {
-            setLiked(!liked); // フロントエンドの状態を即時変更
+            setLiked(!liked); 
             setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
-            setPendingRequest(true); // リクエスト中にする
-            sendLikeRequest(); // デバウンスでリクエストを送る
+            setPendingRequest(true); 
+            sendLikeRequest(); 
         }
-    }, 500); // デバウンス間隔を500msに設定
+    }, 500);
 
     return (
-        <button onClick={handleLike} disabled={pendingRequest}>
-            {liked ? "❤️" : "♡"} {likeCount}
-        </button>
+        <div className="like-button" onClick={handleLike} role="button" aria-disabled={pendingRequest}>
+            <span className="like-icon">{liked ? "❤️" : "♡"}</span>
+            <span className="like-count">{likeCount}</span>
+        </div>
     );
 };
 

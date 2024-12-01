@@ -13,7 +13,10 @@ interface Reply {
     created_at: string;
 }
 
-const ReplyList: React.FC<{ postID: number }> = ({ postID }) => {
+const ReplyList: React.FC<{
+    postID: number;
+    onReplyCountChange: (count: number) => void;
+}> = ({ postID, onReplyCountChange }) => {
     const [replies, setReplies] = useState<Reply[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -24,9 +27,12 @@ const ReplyList: React.FC<{ postID: number }> = ({ postID }) => {
     const fetchReplies = async () => {
         try {
             const data = await getRepliesByPost(postID);
-            setReplies(data);
+            setReplies(data || []); 
+            onReplyCountChange(data?.length || 0); 
         } catch (error) {
             console.error("リプライ取得エラー:", error);
+            setReplies([]); 
+            onReplyCountChange(0); 
         } finally {
             setLoading(false);
         }
