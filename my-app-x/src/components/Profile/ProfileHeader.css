@@ -1,87 +1,97 @@
+/* 全体のレイアウト */
 .profile-header {
-    background-color: #f5f5f5; /* 背景色 */
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ddd; /* 下線で区切り */
     position: relative;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
 }
 
-.cover-photo {
+/* ヘッダー画像 */
+.header-container {
     width: 100%;
     height: 200px;
-    background-color: #d8d8d8; /* カバー写真の背景色 */
     position: relative;
+    overflow: hidden;
+    background-color: #ddd; /* 画像がない場合の背景 */
+    border-radius: 8px 8px 0 0;
 }
 
+.header-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* プロフィール画像 */
+.icon-container {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid white;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.icon-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* プロフィール情報 */
 .profile-info {
-    display: flex;
-    justify-content: space-between; /* プロフィール写真と編集ボタンを両端に配置 */
-    align-items: flex-start;
-    padding: 20px;
-    margin-top: -60px; /* カバー写真の下に重ねて配置 */
-    position: relative;
+    margin-top: 60px; /* プロフィール画像分の余白を確保 */
+    text-align: center;
+    padding: 0 20px;
 }
 
-.profile-picture {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%; /* 丸い形状 */
-    border: 4px solid white; /* 白い枠線 */
-    background-color: #ccc; /* プロフィール写真の背景色 */
-}
-
-.profile-details {
-    flex: 1;
-    margin-left: 20px; /* プロフィール写真との間隔 */
-}
-
-.profile-details h1 {
-    font-size: 24px;
+.profile-info h1 {
+    font-size: 18px;
     font-weight: bold;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* アイコンとの間隔 */
+    margin: 0 0 5px;
 }
 
-.profile-details p {
+.profile-info p {
     margin: 5px 0;
     font-size: 14px;
     color: #555;
 }
 
-.profile-bio {
+.profile-info .bio {
     font-size: 14px;
-    color: #555;
+    color: #333;
     margin: 10px 0;
 }
 
+/* 編集ボタン */
+.edit-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    color: #1d9bf0;
+    border: 1px solid #1d9bf0;
+    border-radius: 9999px;
+    padding: 5px 15px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.edit-button:hover {
+    background-color: #1d9bf0;
+    color: white;
+}
+
+/* フォロー・フォロワー情報 */
 .profile-stats {
     display: flex;
-    gap: 15px; /* フォロー数とフォロワー数の間隔 */
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
     font-size: 14px;
     color: #555;
-}
-
-.profile-stats span {
-    cursor: pointer;
-}
-
-.profile-stats span:hover {
-    text-decoration: underline;
-}
-
-.edit-profile-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    background-color: white;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.edit-profile-button:hover {
-    background-color: #e6e6e6;
-    color: #000;
 }

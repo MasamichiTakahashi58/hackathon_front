@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fireAuth } from "../../firebase"; 
 import api from "../../api/axiosInstance";
+import "./ProfileCreateForm.css";
 
 const ProfileCreateForm: React.FC = () => {
     const [username, setUsername] = useState("");
