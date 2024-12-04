@@ -25,7 +25,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
     const fetchReplyCount = async () => {
         try {
             const replies = await getRepliesByPost(post.id);
-            setReplyCount(replies.length); 
+            setReplyCount(replies?.length || 0);
         } catch (error) {
             console.error("リプライ数取得エラー:", error);
         }

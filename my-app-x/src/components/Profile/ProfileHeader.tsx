@@ -9,15 +9,14 @@ interface ProfileHeaderProps {
         bio: string;
         profile_image: string;
         header_image: string;
-    
     };
-    onImageChange: (type: "icon" | "header", file: File) => void;
+    onImageChange: (type: "icon" | "header", file: File) => Promise<void>;
 }
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo, onImageChange }) => {
     return (
         <div className="profile-header">
-            {/* ヘッダー画像 */}
             <div className="header-container">
                 <ImageUploader
                     currentImage={userInfo.header_image}
@@ -26,7 +25,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo, onImageChange }
                 />
             </div>
 
-            {/* プロフィール画像 */}
             <div className="icon-container">
                 <ImageUploader
                     currentImage={userInfo.profile_image}
@@ -34,19 +32,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo, onImageChange }
                     type="icon"
                 />
             </div>
-            {/* 編集ボタン */}
-            <button className="edit-button">プロフィールを編集</button>
 
-
-            {/* プロフィール情報 */}
             <div className="profile-info">
                 <h1>{userInfo.display_name}</h1>
                 <p>@{userInfo.username}</p>
                 <p className="bio">{userInfo.bio}</p>
-                <div className="profile-stats">
-                    <span>14 フォロー中</span>
-                    <span>5 フォロワー</span>
-                </div>
+                <button className="edit-button">プロフィールを編集</button>
             </div>
         </div>
     );
