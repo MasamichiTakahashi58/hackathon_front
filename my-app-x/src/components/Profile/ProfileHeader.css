@@ -25,9 +25,8 @@
 /* プロフィール画像 */
 .icon-container {
     position: absolute;
-    bottom: -50px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 10px;
+    left: 20px; /* 左側に固定 */
     width: 100px;
     height: 100px;
     border-radius: 50%;
@@ -44,13 +43,14 @@
 
 /* プロフィール情報 */
 .profile-info {
-    margin-top: 60px; /* プロフィール画像分の余白を確保 */
-    text-align: center;
+    margin-top: 60px; /* アイコンの下の余白を確保 */
+    margin-left: 140px; /* アイコンの右側に配置 */
+    text-align: left; /* 左揃え */
     padding: 0 20px;
 }
 
 .profile-info h1 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     margin: 0 0 5px;
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import ImageUploader from "../ImageUploader/ImageUploader";
 import "./ProfileHeader.css";
 
@@ -12,9 +13,14 @@ interface ProfileHeaderProps {
     };
     onImageChange: (type: "icon" | "header", file: File) => Promise<void>;
 }
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo, onImageChange }) => {
+    const navigate = useNavigate();
+
+    const handleEditProfile = () => {
+        navigate("/profile/edit"); // プロフィール編集ページへ遷移
+    };
+
     return (
         <div className="profile-header">
             <div className="header-container">
@@ -37,7 +43,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo, onImageChange }
                 <h1>{userInfo.display_name}</h1>
                 <p>@{userInfo.username}</p>
                 <p className="bio">{userInfo.bio}</p>
-                <button className="edit-button">プロフィールを編集</button>
+                <button className="edit-button" onClick={handleEditProfile}>
+                    プロフィールを編集
+                </button>
             </div>
         </div>
     );

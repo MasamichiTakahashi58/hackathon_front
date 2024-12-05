@@ -22,7 +22,8 @@ const ProfilePage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const MAX_FILE_SIZE = 500 * 1024 * 1024;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const handleImageChange = async (type: "icon" | "header", file: File) => {
         if (!userID) {
@@ -30,7 +31,7 @@ const ProfilePage: React.FC = () => {
             return;
         }
         if (file.size > MAX_FILE_SIZE) {
-            alert("ファイルサイズが大きすぎます（500MB以下にしてください）。");
+            alert("ファイルサイズが大きすぎます（10MB以下にしてください）。");
             return;
         }
 
@@ -38,7 +39,7 @@ const ProfilePage: React.FC = () => {
             const filePath = await uploadUserImage(Number(userID), file, type);
             setUserInfo((prev) => ({
                 ...prev!,
-                [`${type}_image`]: filePath,
+                [`${type}_image`]: `${BASE_URL}${filePath}`,
             }));
         } catch (err) {
             console.error("画像アップロードエラー:", err);
@@ -56,7 +57,11 @@ const ProfilePage: React.FC = () => {
 
             try {
                 const userData = await getUserById(Number(userID));
-                setUserInfo(userData);
+                setUserInfo({
+                    ...userData,
+                    profile_image: userData.profile_image ? `${BASE_URL}${userData.profile_image}` : "",
+                    header_image: userData.header_image ? `${BASE_URL}${userData.header_image}` : "",
+                });
             } catch (err) {
                 console.error("プロフィール取得エラー:", err);
                 setError("プロフィール情報の取得に失敗しました。");
