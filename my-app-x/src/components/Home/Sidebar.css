@@ -27,3 +27,26 @@
     background-color: #1d9bf0;
     color: #fff;
 }
+
+.logout-button-container {
+    margin-top: auto; /* サイドバーの一番下に配置 */
+    width: 100%; /* 横幅いっぱいにする */
+}
+
+.logout-button {
+    color: #ff4d4d; /* 赤文字 */
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%; /* 横幅いっぱいにする */
+    border-radius: 8px;
+}
+
+.logout-button:hover {
+    background-color: #ff6666; /* ホバー時の背景色 */
+    color: white; /* ホバー時の文字色 */
+}

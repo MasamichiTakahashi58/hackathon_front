@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getRepliesByPost } from "../../services/ReplyService";
+import ReplyForm from "./ReplyForm";
 import "./ReplyList.css";
 
 interface Reply {
@@ -21,6 +22,7 @@ const ReplyList: React.FC<{
     const [replies, setReplies] = useState<Reply[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
+    const [showReplyFormFor, setShowReplyFormFor] = useState<number | null>(null);
 
     useEffect(() => {
         fetchReplies();
@@ -53,23 +55,29 @@ const ReplyList: React.FC<{
         });
     };
 
+    const closeChildReplies = (replyID: number) => {
+        setExpandedReplies((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(replyID);
+            return newSet;
+        });
+    };
+
     const renderReplies = (parentID: number | null, depth: number) => {
         const childReplies = replies.filter((reply) => {
             if (parentID === null) {
-                // 初期リプライ: parent_id が存在せず、relation_depth が 1 のものを選択
                 return !reply.parent_id && reply.relation_depth === depth;
             }
-            // 子リプライ: 指定された親リプライ ID を持つリプライを選択
             return reply.parent_id === parentID && reply.relation_depth === depth;
         });
-    
+
         console.log("親リプライ:", parentID, "深さ:", depth, "対象のリプライ:", childReplies);
-    
+
         return childReplies.map((reply) => {
             const hasChildReplies = replies.some(
                 (child) => child.parent_id === reply.id && child.relation_depth === depth + 1
             );
-    
+        
             return (
                 <div key={reply.id} className="reply-item">
                     <div className="reply-header">
@@ -78,26 +86,53 @@ const ReplyList: React.FC<{
                         <small>{new Date(reply.created_at).toLocaleDateString()}</small>
                     </div>
                     <p className="reply-content">{reply.content}</p>
-    
-                    {/* 子リプライを表示するボタン */}
-                    {hasChildReplies && !expandedReplies.has(reply.id) && (
+        
+                    {/* ボタンの表示部分 */}
+                    <div className="reply-actions">
+                        {/* リプライフォームを表示するボタン */}
                         <button
-                            className="reply-button"
-                            onClick={() => toggleExpandReplies(reply.id)}
+                            className="reply-create-button"
+                            onClick={() =>
+                                setShowReplyFormFor((current) =>
+                                    current === reply.id ? null : reply.id
+                                )
+                            }
                         >
-                            子リプライを表示 (
-                            {
-                                replies.filter(
-                                    (child) =>
-                                        child.parent_id === reply.id &&
-                                        child.relation_depth === depth + 1
+                            {showReplyFormFor === reply.id ? "キャンセル" : "リプライを作成"}
+                        </button>
+        
+                        {/* 子リプライの表示/閉じるボタン */}
+                        {hasChildReplies && (
+                            <button
+                                className="reply-toggle-button"
+                                onClick={() => toggleExpandReplies(reply.id)}
+                            >
+                                {expandedReplies.has(reply.id) ? "閉じる" : "子リプライを表示"} (
+                                {
+                                    replies.filter(
+                                        (child) =>
+                                            child.parent_id === reply.id &&
+                                            child.relation_depth === depth + 1
                                     ).length
                                 }
-                            )
-                        </button>
+                                )
+                            </button>
+                        )}
+                    </div>
+        
+                    {/* 子リプライフォーム */}
+                    {showReplyFormFor === reply.id && (
+                        <ReplyForm
+                            postID={postID}
+                            parentID={reply.id}
+                            onReplyCreated={() => {
+                                fetchReplies();
+                                setShowReplyFormFor(null);
+                            }}
+                        />
                     )}
-    
-                    {/* 子リプライを展開 */}
+        
+                    {/* 子リプライの展開 */}
                     {expandedReplies.has(reply.id) && (
                         <div className="child-replies">
                             {renderReplies(reply.id, depth + 1)}
@@ -106,8 +141,8 @@ const ReplyList: React.FC<{
                 </div>
             );
         });
+        
     };
-    
 
     if (loading) {
         return <p>リプライを読み込み中...</p>;

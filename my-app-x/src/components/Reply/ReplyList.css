@@ -53,18 +53,32 @@
     margin-top: 10px;
 }
 
-/* ボタン */
-.reply-button {
+.reply-actions {
+    display: flex;
+    gap: 8px; /* ボタン間のスペース */
+    margin-top: 8px; /* 上下のスペース */
+}
+
+.reply-create-button {
     background-color: #007bff;
     color: white;
     border: none;
     padding: 5px 10px;
-    margin-top: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 0.9rem;
 }
 
-.reply-button:hover {
-    background-color: #0056b3;
+.reply-toggle-button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
 }
+
+.reply-create-button:hover,
+.reply-toggle-button:hover {
+    opacity: 0.9;
+}
+

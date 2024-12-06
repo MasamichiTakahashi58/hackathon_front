@@ -24,8 +24,12 @@ const ProfileEditForm: React.FC = () => {
             }
             try {
                 const userData = await getUserById(Number(userID)); // サービスファイルを使用
-                setProfile(userData);
-                setBioLength(userData.bio.length);
+                setProfile({
+                    username: userData.username || "",
+                    display_name: userData.display_name || "",
+                    bio: userData.bio || "",
+                });
+                setBioLength(userData.bio?.length || 0);
             } catch (error) {
                 console.error("プロフィール取得エラー:", error);
                 alert("プロフィールの取得に失敗しました。");
