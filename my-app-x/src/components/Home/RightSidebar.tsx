@@ -1,5 +1,6 @@
 import React from "react";
 import "./RightSidebar.css";
+import Gemini from '../Gemini/Gemini';
 
 const RightSidebar: React.FC = () => {
     return (
@@ -20,6 +21,7 @@ const RightSidebar: React.FC = () => {
                     <li>#クリスマス</li>
                 </ul>
             </div>
+            <Gemini />
         </div>
     );
 };

@@ -1,3 +1,4 @@
+/* リプライ全体のリスト */
 .replies-list {
     margin-left: 20px;
     border-left: 2px solid #ccc;
@@ -5,24 +6,31 @@
     margin-top: 10px;
 }
 
+/* 個々のリプライ */
 .reply-item {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
 }
 
+/* リプライのヘッダー */
 .reply-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 5px;
 }
 
 .reply-header h4 {
     margin: 0;
     font-size: 1rem;
+    font-weight: bold;
 }
 
 .reply-header .username {
     color: #888;
     font-size: 0.9rem;
+    margin-left: 10px;
 }
 
 .reply-header small {
@@ -30,7 +38,47 @@
     font-size: 0.8rem;
 }
 
+/* リプライの内容 */
 .reply-content {
     margin: 5px 0;
     font-size: 0.95rem;
+    line-height: 1.4;
 }
+
+/* 子リプライを展開する部分 */
+.child-replies {
+    margin-left: 20px;
+    border-left: 2px dashed #ddd;
+    padding-left: 10px;
+    margin-top: 10px;
+}
+
+.reply-actions {
+    display: flex;
+    gap: 8px; /* ボタン間のスペース */
+    margin-top: 8px; /* 上下のスペース */
+}
+
+.reply-create-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reply-toggle-button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reply-create-button:hover,
+.reply-toggle-button:hover {
+    opacity: 0.9;
+}
+

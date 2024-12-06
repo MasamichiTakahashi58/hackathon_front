@@ -1,0 +1,42 @@
+.gemini-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gemini-container h3 {
+    margin-bottom: 10px;
+}
+
+.gemini-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.gemini-button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.gemini-button:hover {
+    background-color: #0056b3;
+}
+
+.gemini-response {
+    margin-top: 20px;
+    background-color: #eef;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+}

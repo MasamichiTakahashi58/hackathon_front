@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fireAuth } from "../../firebase"; 
 import api from "../../api/axiosInstance";
+import "./ProfileCreateForm.css";
 
 const ProfileCreateForm: React.FC = () => {
     const [username, setUsername] = useState("");
     const [displayName, setDisplayName] = useState("");
+    const [usernameError, setUsernameError] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
@@ -21,10 +23,16 @@ const ProfileCreateForm: React.FC = () => {
                 alert("メールアドレスを取得できませんでした。");
                 return;
             }
+            const usernameRegex = /^[a-zA-Z0-9]+$/; // 半角英数字のみ許可
             if (!username.trim()) {
-                alert("ユーザー名を入力してください。");
+                setUsernameError("ユーザー名を入力してください。");
                 return;
             }
+            if (!usernameRegex.test(username)) {
+                setUsernameError("ユーザー名は半角英数字のみ使用できます。");
+                return;
+            }
+            setUsernameError("");
             if (!displayName.trim()) {
                 alert("表示名を入力してください。");
                 return;
@@ -53,18 +61,24 @@ const ProfileCreateForm: React.FC = () => {
     return (
         <div className="profile-form-container">
             <h2>プロフィール作成</h2>
+            
             <input
                 type="text"
-                placeholder="ユーザー名"
+                placeholder="ユーザー名(半角英数字)"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
+            {usernameError && <p className="error-message">{usernameError}</p>}
+            
+
+            
             <input
                 type="text"
                 placeholder="表示名"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
             />
+            
             <button onClick={handleSubmit}>作成</button>
         </div>
     );
