@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import { createPost } from "../../services/PostService";
-import { useAuth } from "../Auth/AuthContext"; // 認証コンテキストをインポート
+import { useAuth } from "../Auth/AuthContext"; // 認証コンテキスト
+import ImageUploader from "../ImageUploader/ImageUploader"; // 画像アップローダー
 import "./PostForm.css";
 
 const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) => {
     const [content, setContent] = useState("");
+    const [imageUrl, setImageUrl] = useState<string>(""); // 画像URL
     const { userID } = useAuth(); // ログイン中のユーザーIDを取得
 
     const handleSubmit = async () => {
-        if (!content.trim()) return;
+        if (!content.trim() && !imageUrl) {
+            alert("テキストまたは画像を入力してください。");
+            return;
+        }
 
         if (!userID) {
             alert("ログインしていません。");
@@ -16,8 +21,9 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
         }
 
         try {
-            await createPost(content, userID); // ログイン中のユーザーIDを利用
+            await createPost(content, userID, imageUrl); // 投稿データをバックエンドに送信
             setContent("");
+            setImageUrl(""); // フォームをリセット
             onPostCreated();
         } catch (error) {
             console.error("投稿エラー:", error);
@@ -42,6 +48,16 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
                     className="post-textarea"
                 />
             </div>
+
+            {/* 画像アップローダー */}
+            <div className="post-image-uploader">
+                <ImageUploader
+                    currentImage=""
+                    onUploadSuccess={setImageUrl} // アップロード成功時に画像URLを保存
+                    type="post_image"
+                />
+            </div>
+
             <div className="post-form-footer">
                 <button className="post-button" onClick={handleSubmit}>
                     ポストする
