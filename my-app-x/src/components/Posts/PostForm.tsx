@@ -1,13 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createPost } from "../../services/PostService";
+import { getUserById } from "../../services/UserService"; // UserService をインポート
 import { useAuth } from "../Auth/AuthContext"; // 認証コンテキスト
 import ImageUploader from "../ImageUploader/ImageUploader"; // 画像アップローダー
 import "./PostForm.css";
 
+const defaultImage = "/images/default.jpg-1733549945541";
 const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) => {
     const [content, setContent] = useState("");
     const [imageUrl, setImageUrl] = useState<string>(""); // 画像URL
+    const [profileImage, setProfileImage] = useState<string>(defaultImage); // 仮のアイコン画像を初期値に
     const { userID } = useAuth(); // ログイン中のユーザーIDを取得
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            if (!userID) return;
+            try {
+                const userProfile = await getUserById(userID); // UserService のメソッドを使用
+                setProfileImage(userProfile.profile_image || defaultImage);
+            } catch (error) {
+                console.error("ユーザー情報の取得に失敗しました:", error);
+            }
+        };
+
+        fetchUserProfile();
+    }, [userID]);
 
     const handleSubmit = async () => {
         if (!content.trim() && !imageUrl) {
@@ -36,7 +53,7 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
             <div className="post-form-header">
                 <div className="post-icon">
                     <img
-                        src="https://via.placeholder.com/48" // 仮のアイコン画像URL
+                        src={profileImage} // ユーザーアイコン画像を表示
                         alt="User Icon"
                         className="user-icon"
                     />
