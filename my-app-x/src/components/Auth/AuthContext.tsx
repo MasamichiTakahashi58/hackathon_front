@@ -5,7 +5,7 @@ import api from "../../api/axiosInstance";
 
 interface AuthContextType {
     user: User | null;
-    userID: number | null; // userID を number 型に変更
+    userID: number | null; 
     loading: boolean;
 }
 

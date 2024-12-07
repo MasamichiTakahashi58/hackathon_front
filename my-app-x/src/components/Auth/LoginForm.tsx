@@ -21,21 +21,29 @@ const LoginForm: React.FC = () => {
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(fireAuth, provider);
-            alert(`ようこそ、${result.user.displayName}さん！`);
-            navigate("/profile/create");// プロフィール作成ページへ遷移
+            const isNewUser = (result as any).additionalUserInfo?.isNewUser;
+    
+            if (isNewUser) {
+                alert(`ようこそ、${result.user.displayName}さん！プロフィールを作成してください。`);
+                navigate("/profile/create"); // プロフィール作成ページへ遷移
+            } else {
+                alert(`お帰りなさい、${result.user.displayName}さん！`);
+                navigate("/home"); // ホームページへ遷移
+            }
         } catch (error: any) {
             handleFirebaseError(error);
         } finally {
             setIsProcessing(false);
         }
     };
+    
 
     const handleEmailAuth = async () => {
         setIsProcessing(true);
         try {
             if (isSignUp) {
                 const userCredential = await createUserWithEmailAndPassword(fireAuth, email, password);
-                alert(`アカウント作成成功: ${userCredential.user.email}`);
+                alert(`メールアドレス登録: ${userCredential.user.email}`);
                 navigate("/profile/create"); // プロフィール作成ページへ遷移
             } else {
                 const userCredential = await signInWithEmailAndPassword(fireAuth, email, password);
