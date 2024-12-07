@@ -1,14 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createPost } from "../../services/PostService";
-import { useAuth } from "../Auth/AuthContext"; // 認証コンテキストをインポート
+import { getUserById } from "../../services/UserService"; // UserService をインポート
+import { useAuth } from "../Auth/AuthContext"; // 認証コンテキスト
+import ImageUploader from "../ImageUploader/ImageUploader"; // 画像アップローダー
 import "./PostForm.css";
 
+const defaultImage = "/images/default.jpg-1733549945541";
 const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) => {
     const [content, setContent] = useState("");
+    const [imageUrl, setImageUrl] = useState<string>(""); // 画像URL
+    const [profileImage, setProfileImage] = useState<string>(defaultImage); // 仮のアイコン画像を初期値に
     const { userID } = useAuth(); // ログイン中のユーザーIDを取得
 
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            if (!userID) return;
+            try {
+                const userProfile = await getUserById(userID); // UserService のメソッドを使用
+                setProfileImage(userProfile.profile_image || defaultImage);
+            } catch (error) {
+                console.error("ユーザー情報の取得に失敗しました:", error);
+            }
+        };
+
+        fetchUserProfile();
+    }, [userID]);
+
     const handleSubmit = async () => {
-        if (!content.trim()) return;
+        if (!content.trim() && !imageUrl) {
+            alert("テキストまたは画像を入力してください。");
+            return;
+        }
 
         if (!userID) {
             alert("ログインしていません。");
@@ -16,8 +38,9 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
         }
 
         try {
-            await createPost(content, userID); // ログイン中のユーザーIDを利用
+            await createPost(content, userID, imageUrl); // 投稿データをバックエンドに送信
             setContent("");
+            setImageUrl(""); // フォームをリセット
             onPostCreated();
         } catch (error) {
             console.error("投稿エラー:", error);
@@ -30,7 +53,7 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
             <div className="post-form-header">
                 <div className="post-icon">
                     <img
-                        src="https://via.placeholder.com/48" // 仮のアイコン画像URL
+                        src={profileImage} // ユーザーアイコン画像を表示
                         alt="User Icon"
                         className="user-icon"
                     />
@@ -42,6 +65,16 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
                     className="post-textarea"
                 />
             </div>
+
+            {/* 画像アップローダー */}
+            <div className="post-image-uploader">
+                <ImageUploader
+                    currentImage=""
+                    onUploadSuccess={setImageUrl} // アップロード成功時に画像URLを保存
+                    type="post_image"
+                />
+            </div>
+
             <div className="post-form-footer">
                 <button className="post-button" onClick={handleSubmit}>
                     ポストする

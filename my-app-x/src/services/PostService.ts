@@ -12,7 +12,15 @@ export const getPosts = async () => {
 };
 
 
-export const createPost = async (content: string, userID: number) => {
-    const response = await api.post('/post/create', { content, user_id: userID });
+export const createPost = async (
+    content: string,
+    userID: number,
+    imageUrl: string = "" // オプション引数として追加
+) => {
+    const response = await api.post('/post/create', {
+        content,
+        user_id: userID,
+        image_url: imageUrl, // 画像URLを含める
+    });
     return response.data;
 };

@@ -2,24 +2,28 @@ import React, { useState, useEffect } from "react";
 import LikeButton from "../Like/LikeButton";
 import ReplyForm from "../Reply/ReplyForm";
 import ReplyList from "../Reply/ReplyList";
-import { getRepliesByPost } from "../../services/ReplyService"; // リプライを取得する関数をインポート
+import { getRepliesByPost } from "../../services/ReplyService";
+import { getUserById } from "../../services/UserService"; 
 import "./PostItem.css";
 
 interface Post {
     id: number;
-    display_name: string;
+    user_id: number; 
     username: string;
-    created_at: string;
+    display_name: string;
     content: string;
+    image_url?: string;
+    created_at: string;
 }
-
+const defaultImage = "/images/default.jpg-1733549945541";
 const PostItem: React.FC<{ post: Post }> = ({ post }) => {
     const [isReplyVisible, setIsReplyVisible] = useState(false);
     const [replyCount, setReplyCount] = useState<number>(0);
+    const [profileImage, setProfileImage] = useState<string>(defaultImage); 
 
-    // 初期表示時にリプライ数を取得
     useEffect(() => {
         fetchReplyCount();
+        fetchProfileImage();
     }, []);
 
     const fetchReplyCount = async () => {
@@ -31,8 +35,17 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
         }
     };
 
+    const fetchProfileImage = async () => {
+        try {
+            const userProfile = await getUserById(post.user_id); 
+            setProfileImage(userProfile.profile_image || defaultImage);
+        } catch (error) {
+            console.error("プロフィール画像の取得に失敗しました:", error);
+        }
+    };
+
     const handleReplyCreated = () => {
-        fetchReplyCount(); 
+        fetchReplyCount();
     };
 
     return (
@@ -40,7 +53,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
             {/* 投稿情報 */}
             <div className="post-header">
                 <img
-                    src="https://via.placeholder.com/48" // 仮のアイコン画像
+                    src={profileImage} 
                     alt="User Icon"
                     className="user-icon"
                 />
@@ -51,7 +64,12 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
                 <small className="post-date">{new Date(post.created_at).toLocaleDateString()}</small>
             </div>
 
-            <p className="post-content">{post.content}</p>
+            {post.content && <p className="post-content">{post.content}</p>}
+            {post.image_url && (
+                <div className="post-image">
+                    <img src={post.image_url} alt="Post Content" className="post-image-content" />
+                </div>
+            )}
 
             {/* アクションボタン */}
             <div className="post-actions">

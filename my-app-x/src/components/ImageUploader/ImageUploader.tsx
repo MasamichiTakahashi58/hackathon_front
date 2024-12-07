@@ -1,63 +1,115 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import imageCompression from "browser-image-compression";
+import { uploadToFirebase } from "../../services/FirebaseService";
+
 interface ImageUploaderProps {
     currentImage: string;
-    onImageUpload: (file: File) => void;
-    type: "icon" | "header";
+    onUploadSuccess: (url: string) => void; 
+    type: "icon" | "header" | "post_image"; 
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onImageUpload, type }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuccess, type }) => {
     const [preview, setPreview] = useState(currentImage);
     const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setPreview(URL.createObjectURL(file));
-            setIsUploading(true);
+        if (!file) return;
 
-            try {
-                // 圧縮オプションを用途別に設定
-                const options = {
-                    maxSizeMB: type === "icon" ? 2 : 5, // プロフィール画像は最大2MB、その他は最大5MB
-                    maxWidthOrHeight: type === "icon" ? 500 : 1920, // アイコンは最大500px、その他は1920px
-                    useWebWorker: true, // Web Workerを使用してパフォーマンス向上
-                };
+        setPreview(URL.createObjectURL(file));
+        setIsUploading(true);
 
-                // 画像を圧縮
+        try {
+            // 圧縮設定をtypeごとに変更
+            const options = {
+                maxSizeMB: type === "icon" ? 2 : type === "header" ? 5 : 3, // post_imageは3MB
+                maxWidthOrHeight: type === "icon" ? 500 : type === "header" ? 1920 : 1080, // post_imageは1080px
+                useWebWorker: true,
+            };
             const compressedBlob = await imageCompression(file, options);
-
-            // Blob を File に変換
             const compressedFile = new File([compressedBlob], file.name, {
                 type: file.type,
                 lastModified: Date.now(),
             });
 
-            // 圧縮後のファイルをアップロード処理に渡す
-            await onImageUpload(compressedFile);
-            } catch (error) {
-                alert("画像圧縮に失敗しました。もう一度お試しください。");
-                console.error("画像圧縮エラー:", error);
-                setPreview(currentImage); // エラー時は元の画像を保持
-            } finally {
-                setIsUploading(false);
-            }
+            const downloadURL = await uploadToFirebase(compressedFile, type);
+
+            onUploadSuccess(downloadURL);
+        } catch (error) {
+            alert("画像アップロードに失敗しました。");
+            console.error("アップロードエラー:", error);
+            setPreview(currentImage);
+        } finally {
+            setIsUploading(false);
         }
+    };
+    const handleRemovePreview = () => {
+        setPreview(currentImage); 
+        onUploadSuccess(""); 
+    };
+    const handleButtonClick = () => {
+        fileInputRef.current?.click(); // ボタンから非表示のinputをクリック
     };
 
     return (
         <div className={`image-uploader ${type}`}>
-            <label className="image-label">
-                <img src={preview} alt={type} className={`${type}-image`} />
-                {isUploading && <p>アップロード中...</p>}
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="image-input"
-                    disabled={isUploading}
-                />
-            </label>
+            {type === "post_image" && (
+                <>
+                    {/* 非表示のinputタグ */}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        ref={fileInputRef} // refを設定
+                        style={{ display: "none" }} // 非表示にする
+                        disabled={isUploading}
+                    />
+                    {/* 別ボタンからクリックをトリガー */}
+                    <button
+                        className="post-image-upload-circle"
+                        onClick={handleButtonClick}
+                        disabled={isUploading}
+                    >
+                        {!isUploading ? "画像+" : "アップロード中..."}
+                    </button>
+                </>
+            )}
+
+            {preview && (
+                <div className="image-preview-container">
+                    <img src={preview} alt={`${type} preview`} className={`${type}-image`} />
+                    {type === "post_image" && (
+                        <button className="remove-image-button" onClick={handleRemovePreview}>
+                            ✖
+                        </button>
+                    )}
+                </div>
+            )}
+
+            {type !== "post_image" && (
+                <>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        disabled={isUploading}
+                    />
+                    <button
+                        className={`${type}-image-upload-button`}
+                        onClick={handleButtonClick}
+                        disabled={isUploading}
+                    >
+                        {preview ? (
+                            <img src={preview} alt={`${type} preview`} className={`${type}-image`} />
+                        ) : (
+                            "画像を選択"
+                        )}
+                    </button>
+                </>
+            )}
         </div>
     );
 };

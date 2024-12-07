@@ -31,12 +31,12 @@ const Sidebar: React.FC = () => {
 
     return (
         <div className="sidebar">
-            <button onClick={() => handleNavigation("/home")}>ホーム</button>
-            <button onClick={() => handleNavigation("/profile")}>プロフィール</button>
-            <button onClick={() => handleNavigation("/profile/edit")}>プロフィール編集</button>
+            <button onClick={() => handleNavigation("/home")}>🏠 ホーム</button>
+            <button onClick={() => handleNavigation("/profile")}>👤 プロフィール</button>
+            <button onClick={() => handleNavigation("/profile/edit")}>✏️ プロフィール編集</button>
             <div className="logout-button-container">
                 <button className="logout-button" onClick={handleLogout}>
-                    ログアウト
+                🚪 ログアウト
                 </button>
             </div>
         </div>
