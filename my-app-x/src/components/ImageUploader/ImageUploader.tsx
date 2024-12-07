@@ -76,17 +76,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
                 </>
             )}
 
-            {preview && (
-                <div className="image-preview-container">
-                    <img src={preview} alt={`${type} preview`} className={`${type}-image`} />
-                    {type === "post_image" && (
-                        <button className="remove-image-button" onClick={handleRemovePreview}>
-                            ✖
-                        </button>
-                    )}
-                </div>
-            )}
-
             {type !== "post_image" && (
                 <>
                     <input
