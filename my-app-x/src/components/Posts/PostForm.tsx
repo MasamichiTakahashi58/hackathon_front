@@ -68,12 +68,31 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
 
             {/* 画像アップローダー */}
             <div className="post-image-uploader">
-                <ImageUploader
-                    currentImage=""
-                    onUploadSuccess={setImageUrl} // アップロード成功時に画像URLを保存
-                    type="post_image"
-                />
+            <ImageUploader
+                currentImage=""
+                onUploadSuccess={(url) => {
+                    console.log("ImageUploader uploaded URL:", url); // URLが渡されているか確認
+                    setImageUrl(url);
+                }}
+                type="post_image"
+            />
             </div>
+
+            {imageUrl && (
+                <div className="image-preview-container">
+                    <img
+                        src={imageUrl}
+                        alt="プレビュー画像"
+                        className="image-preview"
+                    />
+                    <button
+                        className="image-remove-button"
+                        onClick={() => setImageUrl("")} // 画像URLをリセット
+                    >
+                        ✖
+                    </button>
+                </div>
+            )}
 
             <div className="post-form-footer">
                 <button className="post-button" onClick={handleSubmit}>

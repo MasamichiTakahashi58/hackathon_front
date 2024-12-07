@@ -25,7 +25,7 @@
 /* プロフィール画像 */
 .icon-container {
     position: absolute;
-    bottom: 10px;
+    bottom: 10px; /* ヘッダー画像の下に半分被せる */
     left: 20px; /* 左側に固定 */
     width: 100px;
     height: 100px;
@@ -39,6 +39,26 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* 削除ボタン */
+.remove-button {
+    position: absolute;
+    bottom: 10px; /* ボタンをコンテナの下に配置 */
+    right: 10px; /* ボタンをコンテナの右下に配置 */
+    background-color: rgba(0, 0, 0, 0.6); /* 半透明の黒背景 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 20; /* ボタンを前面に配置 */
+    transition: background-color 0.3s ease;
+}
+
+.remove-button:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* ホバー時に背景を濃くする */
 }
 
 /* プロフィール情報 */

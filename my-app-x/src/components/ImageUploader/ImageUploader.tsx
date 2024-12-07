@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import imageCompression from "browser-image-compression";
 import { uploadToFirebase } from "../../services/FirebaseService";
 
@@ -9,7 +9,6 @@ interface ImageUploaderProps {
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuccess, type }) => {
-    const [preview, setPreview] = useState(currentImage);
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -17,14 +16,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
         const file = e.target.files?.[0];
         if (!file) return;
 
-        setPreview(URL.createObjectURL(file));
         setIsUploading(true);
 
         try {
             // 圧縮設定をtypeごとに変更
             const options = {
-                maxSizeMB: type === "icon" ? 2 : type === "header" ? 5 : 3, // post_imageは3MB
-                maxWidthOrHeight: type === "icon" ? 500 : type === "header" ? 1920 : 1080, // post_imageは1080px
+                maxSizeMB: type === "icon" ? 2 : type === "header" ? 5 : 3,
+                maxWidthOrHeight: type === "icon" ? 500 : type === "header" ? 1920 : 1080,
                 useWebWorker: true,
             };
             const compressedBlob = await imageCompression(file, options);
@@ -39,15 +37,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
         } catch (error) {
             alert("画像アップロードに失敗しました。");
             console.error("アップロードエラー:", error);
-            setPreview(currentImage);
         } finally {
             setIsUploading(false);
         }
     };
-    const handleRemovePreview = () => {
-        setPreview(currentImage); 
-        onUploadSuccess(""); 
-    };
+
     const handleButtonClick = () => {
         fileInputRef.current?.click(); // ボタンから非表示のinputをクリック
     };
@@ -76,39 +70,36 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
                 </>
             )}
 
-            {preview && (
-                <div className="image-preview-container">
-                    <img src={preview} alt={`${type} preview`} className={`${type}-image`} />
-                    {type === "post_image" && (
-                        <button className="remove-image-button" onClick={handleRemovePreview}>
-                            ✖
-                        </button>
-                    )}
-                </div>
-            )}
-
             {type !== "post_image" && (
                 <>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                        disabled={isUploading}
+            <div className={`image-uploader ${type}`}>
+            <div className={`${type}-image-container`}>
+                {/* 現在の画像を表示 */}
+                {currentImage && (
+                    <img
+                        src={currentImage}
+                        alt={`${type} preview`}
+                        className={`${type}-image`}
                     />
-                    <button
-                        className={`${type}-image-upload-button`}
-                        onClick={handleButtonClick}
-                        disabled={isUploading}
-                    >
-                        {preview ? (
-                            <img src={preview} alt={`${type} preview`} className={`${type}-image`} />
-                        ) : (
-                            "画像を選択"
-                        )}
-                    </button>
-                </>
+                )}
+            </div>
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                disabled={isUploading}
+            />
+            <button
+                className={`${type}-image-upload-button`}
+                onClick={handleButtonClick}
+                disabled={isUploading}
+            >
+                {isUploading ? "アップロード中..." : "画像を選択"}
+            </button>
+        </div>
+            </>
             )}
         </div>
     );

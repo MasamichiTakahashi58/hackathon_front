@@ -1,5 +1,6 @@
 .sidebar {
-    width: 250px;
+    width: 100%; /* 幅を動的に変更 */
+    max-width: 250px; /* 最大幅を指定 */
     background-color: #15202b;
     color: white;
     height: 100vh;
@@ -7,20 +8,22 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 20px;
+    box-sizing: border-box; /* パディングを含む */
 }
 
 .sidebar button {
     background: none;
     color: white;
     border: none;
-    margin: 10px 0;
+    margin: 10px 0; /* 間隔を調整 */
     cursor: pointer;
     font-size: 18px;
     font-weight: bold;
     text-align: left;
-    width: 100%;
+    width: 100%; /* 幅をコンテナに合わせる */
     padding: 10px;
     border-radius: 8px;
+    flex-shrink: 0; /* ボタンが圧縮されないようにする */
 }
 
 .sidebar button:hover {
@@ -29,14 +32,12 @@
 }
 
 .logout-button-container {
-    margin-top: 480px; /* サイドバー内の他のコンテンツとスペースを作る */
-    margin-bottom: 20px; /* 下から少し余白を作る */
-    width: 100%;
+    margin-top: auto; /* 下部に配置 */
+    width: 100%; /* コンテナ全体に合わせる */
 }
 
-
 .logout-button {
-    color: #ff4d4d; 
+    color: #ff4d4d;
     font-size: 18px;
     font-weight: bold;
     text-align: left;
@@ -44,10 +45,32 @@
     border: none;
     cursor: pointer;
     padding: 10px;
-    width: 100%; 
+    width: 100%;
     border-radius: 8px;
 }
 
 .logout-button:hover {
-    background-color: #ff6666; 
+    background-color: #ff6666;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+    .sidebar {
+        width: 80%; /* 画面幅に応じた動的なサイズ */
+        max-width: 200px; /* 最大幅を調整 */
+        height: 100vh;
+        position: fixed; /* 固定表示 */
+        left: -100%; /* 初期状態で非表示 */
+        transition: left 0.3s ease-in-out;
+        z-index: 999; /* 他の要素より前面 */
+    }
+
+    .sidebar.visible {
+        left: 0; /* 表示時 */
+    }
+
+    .sidebar button {
+        font-size: 16px; /* フォントサイズを調整 */
+        margin: 8px 0; /* 間隔を狭める */
+    }
 }
