@@ -50,8 +50,8 @@ const ProfileCreateForm: React.FC = () => {
 
             // API に送信
             await api.post("/users/create", { email, username, display_name: displayName });
-            alert("プロフィールが作成されました！");
-            navigate("/home"); // ホームページへ遷移
+            alert("プロフィールが作成されました！ログインしてください");
+            navigate("/login"); 
         } catch (error) {
             console.error("プロフィール作成エラー:", error);
             alert("プロフィールの作成に失敗しました。");

@@ -29,12 +29,14 @@
 }
 
 .logout-button-container {
-    margin-top: auto; /* サイドバーの一番下に配置 */
-    width: 100%; /* 横幅いっぱいにする */
+    margin-top: 480px; /* サイドバー内の他のコンテンツとスペースを作る */
+    margin-bottom: 20px; /* 下から少し余白を作る */
+    width: 100%;
 }
 
+
 .logout-button {
-    color: #ff4d4d; /* 赤文字 */
+    color: #ff4d4d; 
     font-size: 18px;
     font-weight: bold;
     text-align: left;
@@ -42,11 +44,10 @@
     border: none;
     cursor: pointer;
     padding: 10px;
-    width: 100%; /* 横幅いっぱいにする */
+    width: 100%; 
     border-radius: 8px;
 }
 
 .logout-button:hover {
-    background-color: #ff6666; /* ホバー時の背景色 */
-    color: white; /* ホバー時の文字色 */
+    background-color: #ff6666; 
 }
