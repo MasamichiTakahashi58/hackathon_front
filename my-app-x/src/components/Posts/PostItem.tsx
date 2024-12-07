@@ -3,12 +3,12 @@ import LikeButton from "../Like/LikeButton";
 import ReplyForm from "../Reply/ReplyForm";
 import ReplyList from "../Reply/ReplyList";
 import { getRepliesByPost } from "../../services/ReplyService";
-import { getUserById } from "../../services/UserService"; // ユーザー情報取得
+import { getUserById } from "../../services/UserService"; 
 import "./PostItem.css";
 
 interface Post {
     id: number;
-    user_id: number; // ユーザーIDを追加
+    user_id: number; 
     username: string;
     display_name: string;
     content: string;
@@ -19,11 +19,11 @@ const defaultImage = "/images/default.jpg-1733549945541";
 const PostItem: React.FC<{ post: Post }> = ({ post }) => {
     const [isReplyVisible, setIsReplyVisible] = useState(false);
     const [replyCount, setReplyCount] = useState<number>(0);
-    const [profileImage, setProfileImage] = useState<string>(defaultImage); // 仮のアイコン画像
+    const [profileImage, setProfileImage] = useState<string>(defaultImage); 
 
     useEffect(() => {
         fetchReplyCount();
-        fetchProfileImage(); // アイコン画像を取得
+        fetchProfileImage();
     }, []);
 
     const fetchReplyCount = async () => {
@@ -37,7 +37,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
 
     const fetchProfileImage = async () => {
         try {
-            const userProfile = await getUserById(post.user_id); // `user_id` を使ってユーザー情報を取得
+            const userProfile = await getUserById(post.user_id); 
             setProfileImage(userProfile.profile_image || defaultImage);
         } catch (error) {
             console.error("プロフィール画像の取得に失敗しました:", error);
@@ -53,7 +53,7 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
             {/* 投稿情報 */}
             <div className="post-header">
                 <img
-                    src={profileImage} // フェッチしたアイコン画像を使用
+                    src={profileImage} 
                     alt="User Icon"
                     className="user-icon"
                 />

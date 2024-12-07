@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import imageCompression from "browser-image-compression";
 import { uploadToFirebase } from "../../services/FirebaseService";
 
@@ -11,6 +11,7 @@ interface ImageUploaderProps {
 const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuccess, type }) => {
     const [preview, setPreview] = useState(currentImage);
     const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -32,10 +33,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
                 lastModified: Date.now(),
             });
 
-            // Firebaseで画像をアップロードしてURLを取得
             const downloadURL = await uploadToFirebase(compressedFile, type);
 
-            // 親に通知
             onUploadSuccess(downloadURL);
         } catch (error) {
             alert("画像アップロードに失敗しました。");
@@ -46,23 +45,35 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
         }
     };
     const handleRemovePreview = () => {
-        setPreview(currentImage); // プレビューをリセット
-        onUploadSuccess(""); // 親に削除通知
+        setPreview(currentImage); 
+        onUploadSuccess(""); 
+    };
+    const handleButtonClick = () => {
+        fileInputRef.current?.click(); // ボタンから非表示のinputをクリック
     };
 
     return (
         <div className={`image-uploader ${type}`}>
             {type === "post_image" && (
-                <label className="post-image-upload-circle">
+                <>
+                    {/* 非表示のinputタグ */}
                     <input
                         type="file"
                         accept="image/*"
                         onChange={handleFileChange}
-                        className="image-input"
+                        ref={fileInputRef} // refを設定
+                        style={{ display: "none" }} // 非表示にする
                         disabled={isUploading}
                     />
-                    {!isUploading && <span>+</span>}
-                </label>
+                    {/* 別ボタンからクリックをトリガー */}
+                    <button
+                        className="post-image-upload-circle"
+                        onClick={handleButtonClick}
+                        disabled={isUploading}
+                    >
+                        {!isUploading ? "画像+" : "アップロード中..."}
+                    </button>
+                </>
             )}
 
             {preview && (
@@ -77,17 +88,27 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
             )}
 
             {type !== "post_image" && (
-                <label>
-                    <img src={preview} alt={`${type} preview`} className={`${type}-image`} />
-                    {isUploading && <p>アップロード中...</p>}
+                <>
                     <input
                         type="file"
                         accept="image/*"
                         onChange={handleFileChange}
-                        className="image-input"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
                         disabled={isUploading}
                     />
-                </label>
+                    <button
+                        className={`${type}-image-upload-button`}
+                        onClick={handleButtonClick}
+                        disabled={isUploading}
+                    >
+                        {preview ? (
+                            <img src={preview} alt={`${type} preview`} className={`${type}-image`} />
+                        ) : (
+                            "画像を選択"
+                        )}
+                    </button>
+                </>
             )}
         </div>
     );

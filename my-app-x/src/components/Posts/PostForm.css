@@ -82,17 +82,20 @@
 .image-preview-container {
     position: relative;
     margin-top: 10px;
-    width: 100%;
+    width: auto;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    justify-content: center;
 }
 
 .image-preview {
-    width: 80px;
-    height: 80px;
+    max-width: 300px; /* 最大幅を制限 */
+    max-height: 300px; /* 最大高さを制限 */
+    width: auto; /* アスペクト比を維持 */
+    height: auto; /* アスペクト比を維持 */
     border-radius: 10px;
-    object-fit: cover;
+    object-fit: cover; /* コンテナに収まるようにする */
     border: 1px solid #e6ecf0;
 }
 
