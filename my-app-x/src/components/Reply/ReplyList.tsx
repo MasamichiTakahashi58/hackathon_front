@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getRepliesByPost } from "../../services/ReplyService";
+import { useAuth } from "../Auth/AuthContext";
+import { getRepliesByPost, deleteReply } from "../../services/ReplyService";
 import ReplyForm from "./ReplyForm";
 import "./ReplyList.css";
 
@@ -18,11 +19,13 @@ interface Reply {
 const ReplyList: React.FC<{
     postID: number;
     onReplyCountChange: (count: number) => void;
-}> = ({ postID, onReplyCountChange }) => {
+    currentUserID: number; // ログイン中のユーザーIDを渡す
+}> = ({ postID, onReplyCountChange, currentUserID }) => {
     const [replies, setReplies] = useState<Reply[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
     const [showReplyFormFor, setShowReplyFormFor] = useState<number | null>(null);
+    const { userID } = useAuth();
 
     useEffect(() => {
         fetchReplies();
@@ -40,6 +43,21 @@ const ReplyList: React.FC<{
             onReplyCountChange(0);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteReply = async (replyID: number) => {
+        try {
+            if (window.confirm("このリプライを削除しますか？")) {
+                await deleteReply(replyID);
+                setReplies((prevReplies) =>
+                    prevReplies.filter((reply) => reply.id !== replyID)
+                );
+                onReplyCountChange(replies.length - 1); // リプライ数を更新
+            }
+        } catch (error) {
+            console.error("リプライ削除エラー:", error);
+            alert("リプライの削除に失敗しました。");
         }
     };
 
@@ -71,8 +89,6 @@ const ReplyList: React.FC<{
             return reply.parent_id === parentID && reply.relation_depth === depth;
         });
 
-        console.log("親リプライ:", parentID, "深さ:", depth, "対象のリプライ:", childReplies);
-
         return childReplies.map((reply) => {
             const hasChildReplies = replies.some(
                 (child) => child.parent_id === reply.id && child.relation_depth === depth + 1
@@ -100,6 +116,15 @@ const ReplyList: React.FC<{
                         >
                             {showReplyFormFor === reply.id ? "キャンセル" : "リプライを作成"}
                         </button>
+
+                        {reply.user_id === userID &&(
+                            <button
+                                className="delete-reply-button"
+                                onClick={() => handleDeleteReply(reply.id)}
+                            >
+                                削除
+                            </button>
+                        )}
         
                         {/* 子リプライの表示/閉じるボタン */}
                         {hasChildReplies && (

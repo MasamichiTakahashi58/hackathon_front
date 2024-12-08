@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../Auth/AuthContext";
 import LikeButton from "../Like/LikeButton";
 import ReplyForm from "../Reply/ReplyForm";
 import ReplyList from "../Reply/ReplyList";
 import { getRepliesByPost } from "../../services/ReplyService";
 import { getUserById } from "../../services/UserService"; 
+import { deletePost } from "../../services/PostService";
 import "./PostItem.css";
 
 interface Post {
@@ -16,10 +18,12 @@ interface Post {
     created_at: string;
 }
 const defaultImage = "/images/default.jpg-1733549945541";
-const PostItem: React.FC<{ post: Post }> = ({ post }) => {
+
+const PostItem: React.FC<{ post: Post; onDelete: (postID: number) => void }> = ({ post, onDelete }) => {
     const [isReplyVisible, setIsReplyVisible] = useState(false);
     const [replyCount, setReplyCount] = useState<number>(0);
     const [profileImage, setProfileImage] = useState<string>(defaultImage); 
+    const { userID } = useAuth();
 
     useEffect(() => {
         fetchReplyCount();
@@ -48,6 +52,23 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
         fetchReplyCount();
     };
 
+    const handleDelete = async () => {
+        if (window.confirm("この投稿を削除しますか？")) {
+            try {
+                await deletePost(post.id); // サービスを呼び出して削除
+                onDelete(post.id); // 削除後に親コンポーネントへ通知
+            } catch (error) {
+                console.error("ポスト削除に失敗しました:", error);
+                alert("ポスト削除に失敗しました");
+            }
+        }
+    };
+
+    if (userID === null) {
+        // ログインしていない場合はリストを表示しない
+        return null;
+    }
+
     return (
         <div className="post-item">
             {/* 投稿情報 */}
@@ -62,6 +83,14 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
                     <p className="username">@{post.username}</p>
                 </div>
                 <small className="post-date">{new Date(post.created_at).toLocaleDateString()}</small>
+                {userID === post.user_id && (
+                    <button
+                        className="delete-button"
+                        onClick={handleDelete}
+                    >
+                        削除
+                    </button>
+                )}
             </div>
 
             {post.content && <p className="post-content">{post.content}</p>}
@@ -87,7 +116,11 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
             {isReplyVisible && (
                 <>
                     <ReplyForm postID={post.id} onReplyCreated={handleReplyCreated} />
-                    <ReplyList postID={post.id} onReplyCountChange={setReplyCount} />
+                    <ReplyList
+                        postID={post.id}
+                        onReplyCountChange={setReplyCount}
+                        currentUserID={userID} // プロファイルページ情報を渡す
+                    />
                 </>
             )}
         </div>

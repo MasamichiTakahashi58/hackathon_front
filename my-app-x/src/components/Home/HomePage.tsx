@@ -34,6 +34,11 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const handlePostDelete = (postID: number) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postID));
+    };
+
+
     useEffect(() => {
         fetchPosts();
     }, []);
@@ -46,7 +51,9 @@ const HomePage: React.FC = () => {
                 <PostForm onPostCreated={fetchPosts} />
                 <div className="post-list">
                     {posts.length > 0 ? (
-                        posts.map((post) => <PostItem key={post.id} post={post} />)
+                        posts.map((post) => (
+                            <PostItem key={post.id} post={post} onDelete={handlePostDelete} />
+                        ))
                     ) : (
                         <p>投稿がありません。</p>
                     )}

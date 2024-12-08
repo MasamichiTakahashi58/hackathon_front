@@ -13,13 +13,16 @@ const ProfileEditForm: React.FC = () => {
         bio: "",
     });
     const [bioLength, setBioLength] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const { userID } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
             if (!userID) {
-                alert("ログインしていません。");
+                setError("ログインしていません。");
+                setLoading(false);
                 return;
             }
             try {
@@ -30,9 +33,12 @@ const ProfileEditForm: React.FC = () => {
                     bio: userData.bio || "",
                 });
                 setBioLength(userData.bio?.length || 0);
+                setError(null);
             } catch (error) {
                 console.error("プロフィール取得エラー:", error);
                 alert("プロフィールの取得に失敗しました。");
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -61,6 +67,14 @@ const ProfileEditForm: React.FC = () => {
             alert("プロフィールの更新に失敗しました。");
         }
     };
+
+    if (loading) {
+        return <p>読み込み中...</p>;
+    }
+
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
 
     return (
         <div className="profile-edit-form">
