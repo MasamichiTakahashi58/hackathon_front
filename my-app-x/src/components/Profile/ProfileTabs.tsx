@@ -2,11 +2,23 @@ import React, { useState, useEffect } from "react";
 import { getPosts } from "../../services/PostService";
 import { getRepliesByPost } from "../../services/ReplyService";
 import { hasUserLiked } from "../../services/LikeService";
+import PostItem from "../Posts/PostItem";
 import "./ProfileTabs.css";
 
 interface ProfileTabsProps {
-    userID: string | number;
+    userID: number; // userIDプロパティを明示的に型定義
 }
+
+interface Post {
+    id: number;
+    user_id: number;
+    username: string;
+    display_name: string;
+    content: string;
+    image_url?: string;
+    created_at: string;
+}
+
 interface Reply {
     id: number;
     content: string;
@@ -18,18 +30,18 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
     const [activeTab, setActiveTab] = useState("posts");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [posts, setPosts] = useState<any[]>([]); // ポストデータ
-    const [replies, setReplies] = useState<any[]>([]); // 返信データ
-    const [likedPosts, setLikedPosts] = useState<any[]>([]); // いいねした投稿
-    const [repliedPosts, setRepliedPosts] = useState<any[]>([]); // 自分がリプライした投稿
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [replies, setReplies] = useState<Reply[]>([]);
+    const [likedPosts, setLikedPosts] = useState<Post[]>([]);
+    const [repliedPosts, setRepliedPosts] = useState<Post[]>([]);
 
-    // Fetch posts
     const fetchPosts = async () => {
+        if (!userID) return;
         setLoading(true);
         setError(null);
         try {
-            const data = await getPosts();
-            setPosts(data);
+            const data: Post[] = await getPosts();
+            setPosts(data.filter((post) => post.user_id === Number(userID)));
         } catch (err) {
             setError("ポストの取得に失敗しました。");
         } finally {
@@ -37,34 +49,20 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
         }
     };
 
-    // Fetch replies
-    const fetchReplies = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const data = await getRepliesByPost(Number(userID));
-            setReplies(data);
-        } catch (err) {
-            setError("返信の取得に失敗しました。");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Fetch liked posts
     const fetchLikedPosts = async () => {
+        if (!userID) return;
         setLoading(true);
         setError(null);
         try {
-            const posts = await getPosts();
-            const likedPosts = [];
-            for (const post of posts) {
-                const liked = await hasUserLiked(post.id, Number(userID));
-                if (liked) {
-                    likedPosts.push(post);
+            const allPosts: Post[] = await getPosts();
+            const liked: Post[] = [];
+            for (const post of allPosts) {
+                const likedByUser = await hasUserLiked(post.id, Number(userID));
+                if (likedByUser) {
+                    liked.push(post);
                 }
             }
-            setLikedPosts(likedPosts);
+            setLikedPosts(liked);
         } catch (err) {
             setError("いいねした投稿の取得に失敗しました。");
         } finally {
@@ -72,41 +70,47 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
         }
     };
 
-    // Fetch replied posts
     const fetchRepliedPosts = async () => {
+        if (!userID) return;
         setLoading(true);
         setError(null);
+    
         try {
-            const posts = await getPosts();
-            const userReplies = [];
-
-            // 各投稿のリプライをチェック
-            for (const post of posts) {
-                const replies: Reply[] = await getRepliesByPost(post.id);
-
-                // 自分のリプライがあるかを確認
-                const hasUserReplied = replies.some((reply: Reply) => reply.user_id === Number(userID));
-                if (hasUserReplied) {
-                    userReplies.push(post); // 自分がリプライした投稿をリストに追加
+            console.log("Fetching all posts for userID:", userID);
+            const allPosts: Post[] = await getPosts();
+            const replied: Post[] = [];
+    
+            for (const post of allPosts) {
+                console.log("Fetching replies for postID:", post.id);
+    
+                // リプライを取得
+                const replies: Reply[] = (await getRepliesByPost(post.id)) || [];
+                console.log("Replies for postID:", post.id, replies);
+    
+                // ログインユーザーのリプライをチェック
+                if (replies.some((reply: Reply) => reply.user_id === Number(userID))) {
+                    console.log("User replied to postID:", post.id);
+                    replied.push(post);
                 }
             }
-
-            setRepliedPosts(userReplies);
+    
+            console.log("Replied posts:", replied);
+            setRepliedPosts(replied);
+    
         } catch (err) {
+            console.error("Error while fetching replied posts:", err);
             setError("リプライした投稿の取得に失敗しました。");
         } finally {
             setLoading(false);
         }
     };
+    
+    
 
-    // Handle tab switching
     useEffect(() => {
         switch (activeTab) {
             case "posts":
                 fetchPosts();
-                break;
-            case "replies":
-                fetchReplies();
                 break;
             case "media":
                 fetchLikedPosts();
@@ -115,80 +119,34 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
                 fetchRepliedPosts();
                 break;
         }
-    }, [activeTab]);
+    }, [activeTab, userID]);
 
     const renderContent = () => {
         if (loading) return <p>読み込み中...</p>;
         if (error) return <p className="error-message">{error}</p>;
 
+        let content: Post[] = [];
         switch (activeTab) {
             case "posts":
-                return (
-                    <div>
-                        {posts && posts.length > 0 ? (
-                            <ul>
-                                {posts.map((post) => (
-                                    <li key={post.id}>
-                                        {post.content}（UserID: {post.user_id}）
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>ポストがありません。</p>
-                        )}
-                    </div>
-                );
-            case "replies":
-                return (
-                    <div>
-                        {replies && replies.length > 0 ? (
-                            <ul>
-                                {replies.map((reply) => (
-                                    <li key={reply.id}>
-                                        {reply.content}（ParentID: {reply.parent_id}）
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>返信がありません。</p>
-                        )}
-                    </div>
-                );
+                content = posts;
+                break;
             case "media":
-                return (
-                    <div>
-                        {likedPosts && likedPosts.length > 0 ? (
-                            <ul>
-                                {likedPosts.map((post) => (
-                                    <li key={post.id}>
-                                        {post.content}（投稿者ID: {post.user_id}）
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>いいねした投稿がありません。</p>
-                        )}
-                    </div>
-                );
+                content = likedPosts;
+                break;
             case "replied":
-                return (
-                    <div>
-                        {repliedPosts && repliedPosts.length > 0 ? (
-                            <ul>
-                                {repliedPosts.map((post) => (
-                                    <li key={post.id}>
-                                        {post.content}（投稿者ID: {post.user_id}）
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>リプライした投稿がありません。</p>
-                        )}
-                    </div>
-                );
-            default:
-                return null;
+                content = repliedPosts;
+                break;
         }
+
+        return (
+            <div>
+                {content.length > 0 ? (
+                    content.map((post) => <PostItem key={post.id} post={post} />)
+                ) : (
+                    <p>表示する投稿がありません。</p>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -199,12 +157,6 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
                     onClick={() => setActiveTab("posts")}
                 >
                     ポスト
-                </button>
-                <button
-                    className={activeTab === "replies" ? "active" : ""}
-                    onClick={() => setActiveTab("replies")}
-                >
-                    返信
                 </button>
                 <button
                     className={activeTab === "media" ? "active" : ""}
