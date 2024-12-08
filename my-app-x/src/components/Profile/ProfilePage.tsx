@@ -16,16 +16,16 @@ interface UserInfo {
 }
 
 const ProfilePage: React.FC = () => {
-    const { userID } = useAuth();
+    const { userID, loading: authLoading  } = useAuth();
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loadingProfile, setLoadingProfile] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
             if (!userID) {
                 setError("ログインしていません。");
-                setLoading(false);
+                setLoadingProfile(false);
                 return;
             }
 
@@ -36,14 +36,16 @@ const ProfilePage: React.FC = () => {
                 console.error("プロフィール取得エラー:", err);
                 setError("プロフィール情報の取得に失敗しました。");
             } finally {
-                setLoading(false);
+                setLoadingProfile(false);
             }
         };
 
-        fetchProfile();
-    }, [userID]);
+        if (!authLoading) {
+            fetchProfile();
+        }
+    }, [userID, authLoading]);
 
-    if (loading) {
+    if (authLoading || loadingProfile) {
         return <p>読み込み中...</p>;
     }
 
