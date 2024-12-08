@@ -24,3 +24,14 @@ export const createPost = async (
     });
     return response.data;
 };
+
+export const deletePost = async (postID: number) => {
+    try {
+        const response = await api.delete('/post/delete', { params: { post_id: postID } });
+        console.log(`Post with ID ${postID} deleted successfully`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting post with ID ${postID}:`, error);
+        throw error;
+    }
+};

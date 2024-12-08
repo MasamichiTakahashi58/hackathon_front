@@ -65,7 +65,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ currentImage, onUploadSuc
                         onClick={handleButtonClick}
                         disabled={isUploading}
                     >
-                        {!isUploading ? "画像+" : "アップロード中..."}
+                        {!isUploading ? "画像" : "アップロード中..."}
                     </button>
                 </>
             )}
