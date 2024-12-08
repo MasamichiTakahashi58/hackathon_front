@@ -16,7 +16,8 @@ interface Post {
     created_at: string;
 }
 const defaultImage = "/images/default.jpg-1733549945541";
-const PostItem: React.FC<{ post: Post }> = ({ post }) => {
+
+const PostItem: React.FC<{ post: Post; isProfilePage?: boolean }> = ({ post, isProfilePage = false }) => {
     const [isReplyVisible, setIsReplyVisible] = useState(false);
     const [replyCount, setReplyCount] = useState<number>(0);
     const [profileImage, setProfileImage] = useState<string>(defaultImage); 
@@ -87,7 +88,11 @@ const PostItem: React.FC<{ post: Post }> = ({ post }) => {
             {isReplyVisible && (
                 <>
                     <ReplyForm postID={post.id} onReplyCreated={handleReplyCreated} />
-                    <ReplyList postID={post.id} onReplyCountChange={setReplyCount} />
+                    <ReplyList
+                        postID={post.id}
+                        onReplyCountChange={setReplyCount}
+                        isProfilePage={isProfilePage} // プロファイルページ情報を渡す
+                    />
                 </>
             )}
         </div>

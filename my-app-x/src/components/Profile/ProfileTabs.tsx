@@ -141,7 +141,13 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
         return (
             <div>
                 {content.length > 0 ? (
-                    content.map((post) => <PostItem key={post.id} post={post} />)
+                    content.map((post) => (
+                        <PostItem
+                            key={post.id}
+                            post={post}
+                            isProfilePage={activeTab === "replied"} // リプライタブで有効化
+                        />
+                    ))
                 ) : (
                     <p>表示する投稿がありません。</p>
                 )}
