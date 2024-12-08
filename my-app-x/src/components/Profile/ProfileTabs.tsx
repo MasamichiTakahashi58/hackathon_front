@@ -31,7 +31,6 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [posts, setPosts] = useState<Post[]>([]);
-    const [replies, setReplies] = useState<Reply[]>([]);
     const [likedPosts, setLikedPosts] = useState<Post[]>([]);
     const [repliedPosts, setRepliedPosts] = useState<Post[]>([]);
 
@@ -105,7 +104,19 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
         }
     };
     
-    
+    const handlePostDelete = (postID: number) => {
+        switch (activeTab) {
+            case "posts":
+                setPosts((prev) => prev.filter((post) => post.id !== postID));
+                break;
+            case "media":
+                setLikedPosts((prev) => prev.filter((post) => post.id !== postID));
+                break;
+            case "replied":
+                setRepliedPosts((prev) => prev.filter((post) => post.id !== postID));
+                break;
+        }
+    };
 
     useEffect(() => {
         switch (activeTab) {
@@ -145,6 +156,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
                         <PostItem
                             key={post.id}
                             post={post}
+                            onDelete={handlePostDelete}
                         />
                     ))
                 ) : (

@@ -82,3 +82,23 @@
     opacity: 0.9;
 }
 
+.delete-reply-button {
+    background-color: #c73030; /* ボタンの背景色 */
+    color: white;          /* ボタンのテキスト色 */
+    border: none;          /* 枠線をなしに */
+    border-radius: 8px;    /* 角丸に */
+    padding: 6px 12px;     /* パディング */
+    font-size: 14px;       /* フォントサイズ */
+    cursor: pointer;       /* カーソルをポインターに */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 影を追加 */
+    transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
+}
+
+.delete-reply-button:hover {
+    background-color: #555; /* ホバー時の背景色 */
+}
+
+.delete-reply-button:active {
+    background-color: #222; /* 押下時の背景色 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 押下時の影 */
+}
