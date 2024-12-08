@@ -6,6 +6,7 @@ import ReplyList from "../Reply/ReplyList";
 import { getRepliesByPost } from "../../services/ReplyService";
 import { getUserById } from "../../services/UserService"; 
 import { deletePost } from "../../services/PostService";
+import UserProfilePopup from "./UserProfilePopup";
 import "./PostItem.css";
 
 interface Post {
@@ -24,6 +25,8 @@ const PostItem: React.FC<{ post: Post; onDelete: (postID: number) => void }> = (
     const [replyCount, setReplyCount] = useState<number>(0);
     const [profileImage, setProfileImage] = useState<string>(defaultImage); 
     const { userID } = useAuth();
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [userBio, setUserBio] = useState<string | null>(null);
 
     useEffect(() => {
         fetchReplyCount();
@@ -46,6 +49,21 @@ const PostItem: React.FC<{ post: Post; onDelete: (postID: number) => void }> = (
         } catch (error) {
             console.error("プロフィール画像の取得に失敗しました:", error);
         }
+    };
+
+    const handleOpenPopup = async () => {
+        setIsPopupVisible(true);
+        try {
+            const userProfile = await getUserById(post.user_id); // APIでbioを取得
+            setUserBio(userProfile.bio || ""); // bioを更新
+        } catch (error) {
+            console.error("ユーザープロフィールの取得に失敗しました:", error);
+        }
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupVisible(false);
+        setUserBio(null); // ポップアップを閉じるときにbioをリセット
     };
 
     const handleReplyCreated = () => {
@@ -78,10 +96,14 @@ const PostItem: React.FC<{ post: Post; onDelete: (postID: number) => void }> = (
                     alt="User Icon"
                     className="user-icon"
                 />
-                <div className="user-info">
+                <div
+                    className="user-info"
+                    onClick={handleOpenPopup}
+                >
                     <h3 className="display-name">{post.display_name}</h3>
                     <p className="username">@{post.username}</p>
                 </div>
+
                 <small className="post-date">{new Date(post.created_at).toLocaleDateString()}</small>
                 {userID === post.user_id && (
                     <button
@@ -122,6 +144,15 @@ const PostItem: React.FC<{ post: Post; onDelete: (postID: number) => void }> = (
                         currentUserID={userID} // プロファイルページ情報を渡す
                     />
                 </>
+            )}
+            {isPopupVisible && (
+                <UserProfilePopup
+                    displayName={post.display_name}
+                    username={post.username}
+                    profileImage={profileImage}
+                    bio={userBio || "Loading..."} // bioを渡す
+                    onClose={handleClosePopup} // ポップアップを閉じる
+                />
             )}
         </div>
     );

@@ -6,7 +6,7 @@ import { useAuth } from "../Auth/AuthContext"; // 認証コンテキストをイ
 import "./Sidebar.css";
 
 const Sidebar: React.FC = () => {
-    const [isSidebarVisible, setSidebarVisible] = useState(false);
+    const [isSidebarVisible, setSidebarVisible] = useState(true);
     const navigate = useNavigate();
     const { user } = useAuth(); // 認証状態を取得
 
