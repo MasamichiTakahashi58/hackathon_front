@@ -42,3 +42,24 @@
 .reply-button:hover {
     background-color: #0056b3;
 }
+
+.char-count {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: gray;
+}
+
+.char-count.error {
+    color: red;
+    font-weight: bold;
+}
+
+.error-message {
+    color: red;
+    margin-top: 5px;
+}
+
+.reply-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

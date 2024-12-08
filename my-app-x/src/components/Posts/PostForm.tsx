@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { createPost } from "../../services/PostService";
-import { getUserById } from "../../services/UserService"; // UserService をインポート
-import { useAuth } from "../Auth/AuthContext"; // 認証コンテキスト
-import ImageUploader from "../ImageUploader/ImageUploader"; // 画像アップローダー
+import { getUserById } from "../../services/UserService";
+import { useAuth } from "../Auth/AuthContext";
+import ImageUploader from "../ImageUploader/ImageUploader";
 import "./PostForm.css";
 
 const defaultImage = "/images/default.jpg-1733549945541";
+const MAX_POST_LENGTH = 160;
+
 const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) => {
     const [content, setContent] = useState("");
-    const [imageUrl, setImageUrl] = useState<string>(""); // 画像URL
-    const [profileImage, setProfileImage] = useState<string>(defaultImage); // 仮のアイコン画像を初期値に
-    const { userID } = useAuth(); // ログイン中のユーザーIDを取得
+    const [imageUrl, setImageUrl] = useState<string>("");
+    const [profileImage, setProfileImage] = useState<string>(defaultImage);
+    const [error, setError] = useState<string>("");
+    const { userID } = useAuth();
 
     useEffect(() => {
         const fetchUserProfile = async () => {
             if (!userID) return;
             try {
-                const userProfile = await getUserById(userID); // UserService のメソッドを使用
+                const userProfile = await getUserById(userID);
                 setProfileImage(userProfile.profile_image || defaultImage);
             } catch (error) {
                 console.error("ユーザー情報の取得に失敗しました:", error);
@@ -25,6 +28,16 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
 
         fetchUserProfile();
     }, [userID]);
+
+    const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newContent = e.target.value;
+        if (newContent.length <= MAX_POST_LENGTH) {
+            setContent(newContent);
+            setError("");
+        } else {
+            setError(`ポストは最大${MAX_POST_LENGTH}文字までです。`);
+        }
+    };
 
     const handleSubmit = async () => {
         if (!content.trim() && !imageUrl) {
@@ -38,9 +51,9 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
         }
 
         try {
-            await createPost(content, userID, imageUrl); // 投稿データをバックエンドに送信
+            await createPost(content, userID, imageUrl);
             setContent("");
-            setImageUrl(""); // フォームをリセット
+            setImageUrl("");
             onPostCreated();
         } catch (error) {
             console.error("投稿エラー:", error);
@@ -53,29 +66,29 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
             <div className="post-form-header">
                 <div className="post-icon">
                     <img
-                        src={profileImage} // ユーザーアイコン画像を表示
+                        src={profileImage}
                         alt="User Icon"
                         className="user-icon"
                     />
                 </div>
                 <textarea
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    onChange={handleContentChange}
                     placeholder="いまどうしてる？"
                     className="post-textarea"
                 />
+                <div className={`char-count ${content.length > MAX_POST_LENGTH ? "error" : ""}`}>
+                    {content.length}/{MAX_POST_LENGTH}
+                </div>
+                {error && <p className="error-message">{error}</p>}
             </div>
 
-            {/* 画像アップローダー */}
             <div className="post-image-uploader">
-            <ImageUploader
-                currentImage=""
-                onUploadSuccess={(url) => {
-                    console.log("ImageUploader uploaded URL:", url); // URLが渡されているか確認
-                    setImageUrl(url);
-                }}
-                type="post_image"
-            />
+                <ImageUploader
+                    currentImage=""
+                    onUploadSuccess={(url) => setImageUrl(url)}
+                    type="post_image"
+                />
             </div>
 
             {imageUrl && (
@@ -87,7 +100,7 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
                     />
                     <button
                         className="image-remove-button"
-                        onClick={() => setImageUrl("")} // 画像URLをリセット
+                        onClick={() => setImageUrl("")}
                     >
                         ✖
                     </button>
@@ -95,7 +108,11 @@ const PostForm: React.FC<{ onPostCreated: () => void }> = ({ onPostCreated }) =>
             )}
 
             <div className="post-form-footer">
-                <button className="post-button" onClick={handleSubmit}>
+                <button
+                    className="post-button"
+                    onClick={handleSubmit}
+                    disabled={content.length > MAX_POST_LENGTH}
+                >
                     ポストする
                 </button>
             </div>
