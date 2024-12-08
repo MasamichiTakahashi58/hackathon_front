@@ -145,7 +145,6 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ userID }) => {
                         <PostItem
                             key={post.id}
                             post={post}
-                            isProfilePage={activeTab === "replied"} // リプライタブで有効化
                         />
                     ))
                 ) : (

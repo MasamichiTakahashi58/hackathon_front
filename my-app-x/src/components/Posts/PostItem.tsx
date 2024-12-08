@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../Auth/AuthContext";
 import LikeButton from "../Like/LikeButton";
 import ReplyForm from "../Reply/ReplyForm";
 import ReplyList from "../Reply/ReplyList";
@@ -17,10 +18,11 @@ interface Post {
 }
 const defaultImage = "/images/default.jpg-1733549945541";
 
-const PostItem: React.FC<{ post: Post; isProfilePage?: boolean }> = ({ post, isProfilePage = false }) => {
+const PostItem: React.FC<{ post: Post }> = ({ post }) => {
     const [isReplyVisible, setIsReplyVisible] = useState(false);
     const [replyCount, setReplyCount] = useState<number>(0);
     const [profileImage, setProfileImage] = useState<string>(defaultImage); 
+    const { userID } = useAuth();
 
     useEffect(() => {
         fetchReplyCount();
@@ -48,6 +50,11 @@ const PostItem: React.FC<{ post: Post; isProfilePage?: boolean }> = ({ post, isP
     const handleReplyCreated = () => {
         fetchReplyCount();
     };
+
+    if (userID === null) {
+        // ログインしていない場合はリストを表示しない
+        return null;
+    }
 
     return (
         <div className="post-item">
@@ -91,7 +98,7 @@ const PostItem: React.FC<{ post: Post; isProfilePage?: boolean }> = ({ post, isP
                     <ReplyList
                         postID={post.id}
                         onReplyCountChange={setReplyCount}
-                        isProfilePage={isProfilePage} // プロファイルページ情報を渡す
+                        currentUserID={userID} // プロファイルページ情報を渡す
                     />
                 </>
             )}

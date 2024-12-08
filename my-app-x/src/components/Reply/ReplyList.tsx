@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../Auth/AuthContext";
 import { getRepliesByPost, deleteReply } from "../../services/ReplyService";
 import ReplyForm from "./ReplyForm";
 import "./ReplyList.css";
@@ -18,12 +19,13 @@ interface Reply {
 const ReplyList: React.FC<{
     postID: number;
     onReplyCountChange: (count: number) => void;
-    isProfilePage?: boolean; // プロパティを定義
-}> = ({ postID, onReplyCountChange, isProfilePage = false }) => {
+    currentUserID: number; // ログイン中のユーザーIDを渡す
+}> = ({ postID, onReplyCountChange, currentUserID }) => {
     const [replies, setReplies] = useState<Reply[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
     const [showReplyFormFor, setShowReplyFormFor] = useState<number | null>(null);
+    const { userID } = useAuth();
 
     useEffect(() => {
         fetchReplies();
@@ -115,7 +117,7 @@ const ReplyList: React.FC<{
                             {showReplyFormFor === reply.id ? "キャンセル" : "リプライを作成"}
                         </button>
 
-                        {isProfilePage && (
+                        {reply.user_id === userID &&(
                             <button
                                 className="delete-reply-button"
                                 onClick={() => handleDeleteReply(reply.id)}
